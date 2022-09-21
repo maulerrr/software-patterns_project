@@ -1,11 +1,12 @@
 package task1.restaurants;
 
+import task1.delivery.Deliverable;
 import task1.menu.MenuGenerationStrategy;
 import task1.menu.PriceRangeMenuStrategy;
 import task1.payment.CashStrategy;
 import task1.payment.PaymentStrategy;
 
-public abstract class Restaurant {
+public class Restaurant {
     private PaymentStrategy paymentStrategy;
     private MenuGenerationStrategy menuGenerationStrategy;
 
@@ -24,8 +25,8 @@ public abstract class Restaurant {
     public void cookFood(){
         System.out.println("Food is cooking");
     }
-    public void pay(int price){
-        paymentStrategy.pay(price);
+    public void pay(){
+        paymentStrategy.pay();
     }
     public void generateMenu(){
         menuGenerationStrategy.generateMenu();

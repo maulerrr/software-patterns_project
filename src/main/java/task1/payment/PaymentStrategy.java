@@ -1,6 +1,6 @@
 package task1.payment;
 
 public interface PaymentStrategy {
-    void pay(int price);
+    void pay();
 
 }
