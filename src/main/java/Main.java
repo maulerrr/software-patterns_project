@@ -1,10 +1,15 @@
 import task1.delivery.Deliverable;
+import task1.helpers.ClockInterval;
+import task1.menu.PriceRangeMenuStrategy;
+import task1.menu.SeasonBasedMenuStrategy;
+import task1.menu.TimeOfDayMenuStrategy;
 import task1.payment.CashStrategy;
 import task1.payment.CreditCardStrategy;
 import task1.restaurants.KoreanRestaurant;
 import task1.restaurants.MexicanRestaurant;
 import task1.restaurants.Restaurant;
 
+import java.time.LocalTime;
 import java.util.Scanner;
 
 public class Main {
@@ -41,6 +46,12 @@ public class Main {
     }
 
     private static void exeuteDeliverableRestaurant(MexicanRestaurant restaurant, Scanner sc) {
+        getDeliveryChoice(restaurant, sc);
+
+        exeuteDefaultRestaurant(restaurant, sc);
+    }
+
+    private static void getDeliveryChoice(MexicanRestaurant restaurant, Scanner sc) {
         System.out.println("----------------------------------");
         System.out.println("Do you want to get delivery? If yes press 1, unless press 2");
         System.out.print("Enter number: ");
@@ -71,16 +82,20 @@ public class Main {
 //            restaurant.deliver();
             System.out.println("Delivering!");
         }
-
-        exeuteDefaultRestaurant(restaurant, sc);
     }
 
     private static void exeuteDefaultRestaurant(Restaurant restaurant, Scanner sc) {
+        getMenuChoice(restaurant, sc);
+
         System.out.println("----------------------------------");
         System.out.print("Result: ");
         restaurant.cookFood();
         System.out.println("----------------------------------");
 
+        getPaymentChoice(restaurant, sc);
+    }
+
+    private static void getPaymentChoice(Restaurant restaurant, Scanner sc) {
         System.out.println("How do you want to pay for food?");
         System.out.println("1. Cash");
         System.out.println("2. Credit card");
@@ -98,5 +113,47 @@ public class Main {
 
         System.out.print("Result: ");
         restaurant.pay();
+    }
+
+    private static void getMenuChoice(Restaurant restaurant, Scanner sc) {
+        System.out.println("----------------------------------");
+        System.out.println("There is price-ranged menu. Do you want to see other menus?");
+        System.out.println("If yes press 1, unless press 2");
+
+        System.out.print("Enter number: ");
+        int isDeafaultMenu = sc.nextInt();
+        if(isDeafaultMenu > 2) throw new IllegalStateException("Error! You entered wrong number!");
+        System.out.println("----------------------------------");
+
+
+        ClockInterval morning = ClockInterval.between(LocalTime.of(5, 30), LocalTime.of(15, 30));
+        LocalTime timeAtNow = LocalTime.now();
+
+        boolean isTimeOfDayMenuEnabled = morning.contains(timeAtNow);
+
+        if(isDeafaultMenu == 1) {
+            System.out.println("Choose menu:");
+            System.out.println("1. Season-based menu ");
+            System.out.println("2. Price-ranged menu ");
+
+            if (isTimeOfDayMenuEnabled) {
+                System.out.println("3. Time-of-day menu ");
+            }
+
+            System.out.print("Enter number: ");
+            int menuChoice = sc.nextInt();
+            if(isTimeOfDayMenuEnabled && menuChoice > 3) throw new IllegalStateException("Error! You entered wrong number!");
+            if(!isTimeOfDayMenuEnabled &&menuChoice > 2) throw new IllegalStateException("Error! You entered wrong number!");
+
+            switch (menuChoice) {
+                case 1 -> restaurant.setMenuGenerationStrategy(new SeasonBasedMenuStrategy());
+                case 2 -> restaurant.setMenuGenerationStrategy(new PriceRangeMenuStrategy());
+                case 3 -> restaurant.setMenuGenerationStrategy(new TimeOfDayMenuStrategy());
+            }
+
+            System.out.println("----------------------------------");
+            System.out.print("Result: ");
+            restaurant.generateMenu();
+        }
     }
 }
