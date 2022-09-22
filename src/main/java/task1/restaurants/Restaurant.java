@@ -6,7 +6,7 @@ import task1.menu.PriceRangeMenuStrategy;
 import task1.payment.CashStrategy;
 import task1.payment.PaymentStrategy;
 
-public class Restaurant {
+public abstract class Restaurant {
     private PaymentStrategy paymentStrategy;
     private MenuGenerationStrategy menuGenerationStrategy;
 

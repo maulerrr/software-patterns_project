@@ -1,4 +1,5 @@
-import task1.delivery.Deliverable;
+import task1.delivery.WoltDelivery;
+import task1.delivery.YandexDelivery;
 import task1.helpers.ClockInterval;
 import task1.menu.PriceRangeMenuStrategy;
 import task1.menu.SeasonBasedMenuStrategy;
@@ -67,20 +68,15 @@ public class Main {
 
             System.out.print("Enter number: ");
             int deliveryChoice = sc.nextInt();
-//            if(deliveryChoice > 2) throw new IllegalStateException("Error! You entered wrong number!");
-//
-//            switch (deliveryChoice) {
-//                case 1:
-//                      restaurant.setDeliverStrategy(new YandexDelivery());
-//                      break;
-//                case 2:
-//                      restaurant.setDeliverStrategy(new WoltDelivery());
-//                      break;
-//            }
+            if(deliveryChoice > 2) throw new IllegalStateException("Error! You entered wrong number!");
+
+            switch (deliveryChoice) {
+                case 1 -> restaurant.setDeliverStrategy(new YandexDelivery());
+                case 2 -> restaurant.setDeliverStrategy(new WoltDelivery());
+            }
             System.out.println("----------------------------------");
             System.out.print("Result: ");
-//            restaurant.deliver();
-            System.out.println("Delivering!");
+            restaurant.deliver();
         }
     }
 
