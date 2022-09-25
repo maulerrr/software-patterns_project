@@ -18,12 +18,11 @@ public class Main {
         Scanner sc = new Scanner(System.in);
 
         handleUserChoice(sc);
-
-        System.out.println("----------------------------------");
-
     }
 
     private static void handleUserChoice(Scanner sc) {
+        System.out.println("----------------------------------");
+
         System.out.println("Choose restaurant where you want to get food!");
 
         System.out.println("1. Korean restaurant");
@@ -37,19 +36,19 @@ public class Main {
         switch (numberOfRestaurant) {
             case 1 -> {
                 KoreanRestaurant koreanRestaurant = new KoreanRestaurant();
-                exeuteDefaultRestaurant(koreanRestaurant, sc);
+                executeDefaultRestaurant(koreanRestaurant, sc);
             }
             case 2 -> {
                 MexicanRestaurant mexicanRestaurant = new MexicanRestaurant();
-                exeuteDeliverableRestaurant(mexicanRestaurant, sc);
+                executeDeliverableRestaurant(mexicanRestaurant, sc);
             }
         }
     }
 
-    private static void exeuteDeliverableRestaurant(MexicanRestaurant restaurant, Scanner sc) {
+    private static void executeDeliverableRestaurant(MexicanRestaurant restaurant, Scanner sc) {
         getDeliveryChoice(restaurant, sc);
 
-        exeuteDefaultRestaurant(restaurant, sc);
+        executeDefaultRestaurant(restaurant, sc);
     }
 
     private static void getDeliveryChoice(MexicanRestaurant restaurant, Scanner sc) {
@@ -80,7 +79,7 @@ public class Main {
         }
     }
 
-    private static void exeuteDefaultRestaurant(Restaurant restaurant, Scanner sc) {
+    private static void executeDefaultRestaurant(Restaurant restaurant, Scanner sc) {
         getMenuChoice(restaurant, sc);
 
         System.out.println("----------------------------------");
@@ -108,7 +107,11 @@ public class Main {
         System.out.println("----------------------------------");
 
         System.out.print("Result: ");
-        restaurant.pay();
+        int maxPrice = 20000;
+        int minPrice = 2000;
+        int price = (int)(Math.random()*(maxPrice-minPrice+1)+minPrice);
+        System.out.println("Your bill: " + price + "tg");
+        restaurant.pay(price);
     }
 
     private static void getMenuChoice(Restaurant restaurant, Scanner sc) {
@@ -122,7 +125,7 @@ public class Main {
         System.out.println("----------------------------------");
 
 
-        ClockInterval morning = ClockInterval.between(LocalTime.of(5, 30), LocalTime.of(15, 30));
+        ClockInterval morning = ClockInterval.between(LocalTime.of(7, 30), LocalTime.of(12, 30));
         LocalTime timeAtNow = LocalTime.now();
 
         boolean isTimeOfDayMenuEnabled = morning.contains(timeAtNow);

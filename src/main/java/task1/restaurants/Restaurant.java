@@ -25,8 +25,8 @@ public abstract class Restaurant {
     public void cookFood(){
         System.out.println("Food is cooking");
     }
-    public void pay(){
-        paymentStrategy.pay();
+    public void pay(int price){
+        paymentStrategy.pay(price);
     }
     public void generateMenu(){
         menuGenerationStrategy.generateMenu();
