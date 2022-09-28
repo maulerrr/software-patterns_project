@@ -84,7 +84,7 @@ public class Main {
 
         System.out.println("----------------------------------");
         System.out.print("Result: ");
-        restaurant.cookFood();
+//        restaurant.cookFood(sc.nextInt()); stolik ukazat'
         System.out.println("----------------------------------");
 
         getPaymentChoice(restaurant, sc);
