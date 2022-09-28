@@ -1,13 +1,11 @@
 package task1.restaurants;
 
-import task1.delivery.Deliverable;
 import task1.menu.MenuGenerationStrategy;
 import task1.menu.PriceRangeMenuStrategy;
 import task1.observables.FoodCookingTracker;
 import task1.observables.StaffEnroller;
 import task1.observables.SubscribersNotificationSender;
-import task1.observer.Kitchen;
-import task1.observer.Observer;
+import task1.observer.*;
 import task1.payment.CashStrategy;
 import task1.payment.PaymentStrategy;
 
@@ -20,19 +18,44 @@ public abstract class Restaurant implements FoodCookingTracker, StaffEnroller, S
     private PaymentStrategy paymentStrategy;
     private MenuGenerationStrategy menuGenerationStrategy;
 
-    private List<Observer> staffSubscribers;
-    private List<Observer> restaurantSubscribers;
-    private Map<Integer, Observer> tables;
-    Kitchen kitchen;
+    private final List<Staff> staffSubscribers;
+    private final List<RestaurantSubscriber> restaurantSubscribers;
+    private final Map<Integer, Table> tables;
+    private final Kitchen kitchen;
 
-    @Override
-    public void addTable(Observer observer, int tableNumber) {
-        tables.put(tableNumber, observer);
+    public Restaurant () {
+        this.paymentStrategy = new CashStrategy();
+        this.menuGenerationStrategy = new PriceRangeMenuStrategy();
+        this.kitchen = new Kitchen();
+        this.staffSubscribers = new ArrayList<>();
+        this.restaurantSubscribers = new ArrayList<>();
+        this.tables = new HashMap<>();
+    }
+
+    public List<Staff> getStaffSubscribers() {
+        return staffSubscribers;
+    }
+
+    public List<RestaurantSubscriber> getRestaurantSubscribers() {
+        return restaurantSubscribers;
+    }
+
+    public Map<Integer, Table> getTables() {
+        return tables;
+    }
+
+    public Kitchen getKitchen() {
+        return kitchen;
     }
 
     @Override
-    public void removeTable(Observer observer, int tableNumber) {
-        tables.remove(tableNumber, observer);
+    public void addTable(Observer observer, int tableNumber) {
+        tables.put(tableNumber, (Table) observer);
+    }
+
+    @Override
+    public void removeTable(int tableNumber) {
+        tables.remove(tableNumber);
     }
 
     @Override
@@ -43,7 +66,7 @@ public abstract class Restaurant implements FoodCookingTracker, StaffEnroller, S
 
     @Override
     public void attach(Observer observer) {
-        staffSubscribers.add(observer);
+        staffSubscribers.add((Staff) observer);
     }
 
     @Override
@@ -52,14 +75,13 @@ public abstract class Restaurant implements FoodCookingTracker, StaffEnroller, S
     }
 
     @Override
-    public void sendNotification(String message, Observer observer) {
-        int subscriberIndex = staffSubscribers.indexOf(observer);
-        staffSubscribers.get(subscriberIndex).update(message);
+    public void sendStaffNotification(String message) {
+        staffSubscribers.forEach(observer -> observer.update(message));
     }
 
     @Override
     public void subscribe(Observer observer) {
-        restaurantSubscribers.add(observer);
+        restaurantSubscribers.add((RestaurantSubscriber) observer);
     }
 
     @Override
@@ -68,18 +90,8 @@ public abstract class Restaurant implements FoodCookingTracker, StaffEnroller, S
     }
 
     @Override
-    public void sendSubscribersNotification(String message, Observer observer) {
-        int subscriberIndex = restaurantSubscribers.indexOf(observer);
-        restaurantSubscribers.get(subscriberIndex).update(message);
-    }
-
-    public Restaurant () {
-        this.paymentStrategy = new CashStrategy();
-        this.menuGenerationStrategy = new PriceRangeMenuStrategy();
-        this.kitchen = new Kitchen();
-        this.staffSubscribers = new ArrayList<>();
-        this.restaurantSubscribers = new ArrayList<>();
-        this.tables = new HashMap<>();
+    public void sendSubscribersNotification(String message) {
+        restaurantSubscribers.forEach(observer -> observer.update(message));
     }
 
     public void setPaymentStrategy(PaymentStrategy paymentStrategy) {

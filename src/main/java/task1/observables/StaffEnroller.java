@@ -5,5 +5,5 @@ import task1.observer.Observer;
 public interface StaffEnroller {
     void attach(Observer observer);
     void detach(Observer observer);
-    void sendNotification(String message, Observer observer);
+    void sendStaffNotification(String message);
 }

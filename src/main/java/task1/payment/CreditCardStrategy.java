@@ -6,7 +6,7 @@ public class CreditCardStrategy implements PaymentStrategy, Cashback{
         System.out.println("Payed by credit card");
         System.out.println("You got 5% cashback");
         int cashback = getCashback(price);
-        System.out.println("You saved: " + cashback);
+        System.out.println("You saved: " + cashback + "tg");
 
     }
 

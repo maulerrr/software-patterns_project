@@ -9,10 +9,14 @@ public class MexicanRestaurant extends Restaurant implements Deliverable {
     public MexicanRestaurant(){
         this.deliveryStrategy = new YandexDelivery();
     }
-
     @Override
     public void deliver() {
         this.deliveryStrategy.deliver();
+    }
+
+    @Override
+    public void cookFoodForDelivery() {
+        getKitchen().cookFood();
     }
 
     public void setDeliverStrategy(DeliveryStrategy deliveryStrategy){
