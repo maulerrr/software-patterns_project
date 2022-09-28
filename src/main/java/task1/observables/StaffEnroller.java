@@ -1,7 +1,9 @@
 package task1.observables;
 
+import task1.observer.Observer;
+
 public interface StaffEnroller {
-    void attach();
-    void detach();
-    void sendNotification();
+    void attach(Observer observer);
+    void detach(Observer observer);
+    void sendNotification(String message);
 }
