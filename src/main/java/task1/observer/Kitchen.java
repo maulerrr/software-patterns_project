@@ -6,7 +6,7 @@ public class Kitchen implements Observer{
         System.out.println("Kitchen: " + message);
     }
 
-    void cookFood() {
+    public void cookFood() {
         System.out.println("Kitchen is cooking food.");
     }
 }
