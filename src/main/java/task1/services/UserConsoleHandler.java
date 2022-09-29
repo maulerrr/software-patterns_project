@@ -6,6 +6,7 @@ import task1.helpers.ClockInterval;
 import task1.menu.PriceRangeMenuStrategy;
 import task1.menu.SeasonBasedMenuStrategy;
 import task1.menu.TimeOfDayMenuStrategy;
+import task1.observer.DeliverySubscriber;
 import task1.observer.Table;
 import task1.payment.CashStrategy;
 import task1.payment.CreditCardStrategy;
@@ -14,6 +15,7 @@ import task1.restaurants.MexicanRestaurant;
 import task1.restaurants.Restaurant;
 
 import java.time.LocalTime;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class UserConsoleHandler {
@@ -43,9 +45,9 @@ public class UserConsoleHandler {
     }
 
     private static void executeDeliverableRestaurant(MexicanRestaurant restaurant, Scanner sc) {
-        boolean isDelivering = getDeliveryChoice(restaurant, sc);
+        Optional<DeliverySubscriber> deliverySubscriber = getDeliveryChoice(restaurant, sc);
 
-        if(isDelivering) {
+        if(deliverySubscriber.isPresent()) {
             getMenuChoice(restaurant, sc);
 
             restaurant.cookFoodForDelivery();
@@ -53,13 +55,17 @@ public class UserConsoleHandler {
             System.out.println("----------------------------------");
 
             getPaymentChoice(restaurant, sc);
+
+            System.out.println("----------------------------------");
+            restaurant.deliver(deliverySubscriber.get());
+
         } else {
             executeDefaultRestaurant(restaurant, sc);
         }
 
     }
 
-    private static boolean getDeliveryChoice(MexicanRestaurant restaurant, Scanner sc) {
+    private static Optional<DeliverySubscriber> getDeliveryChoice(MexicanRestaurant restaurant, Scanner sc) {
         System.out.println("----------------------------------");
         System.out.println("Do you want to get delivery? If yes press 1, unless press 2");
         System.out.print("Enter number: ");
@@ -69,6 +75,7 @@ public class UserConsoleHandler {
         System.out.println("----------------------------------");
 
         if(isDelivered == 1) {
+            sc.nextLine();
             System.out.println("Choose delivery:");
             System.out.println("1. Yandex food");
             System.out.println("2. Wolt");
@@ -82,13 +89,22 @@ public class UserConsoleHandler {
                 case 2 -> restaurant.setDeliverStrategy(new WoltDelivery());
             }
 
+            sc.nextLine();
+            System.out.println();
+            System.out.println("Additional information: ");
+            System.out.print("Enter your name: ");
+            String name = sc.nextLine();
+            System.out.print("Enter your address to deliver: ");
+            String address = sc.nextLine();
+
+            DeliverySubscriber deliverySubscriber = new DeliverySubscriber(address, name);
+
+
             System.out.println("----------------------------------");
-            System.out.print("Result: ");
-            restaurant.deliver();
-            return true;
+            return Optional.of(deliverySubscriber);
         }
 
-        return false;
+        return Optional.empty();
     }
 
     private static void executeDefaultRestaurant(Restaurant restaurant, Scanner sc) {
@@ -132,8 +148,8 @@ public class UserConsoleHandler {
         System.out.println("There are 3 available tables.");
 
         System.out.println("1. Table 1");
-        System.out.println("1. Table 2");
-        System.out.println("1. Table 3");
+        System.out.println("2. Table 2");
+        System.out.println("3. Table 3");
 
         System.out.print("Choose one you like:");
         int tableNumber = sc.nextInt();

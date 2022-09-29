@@ -278,6 +278,7 @@ public class ManagerConsoleHandler {
             return true;
         }
 
+        System.out.println("----------------------------------");
         System.out.println("Error! Try again...");
         System.out.println("----------------------------------");
         return false;
