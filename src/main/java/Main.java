@@ -10,6 +10,10 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
+        //Default manager info:
+        //Username: manager
+        //Password: 1234
+
         handleUserLogin(sc);
     }
 
