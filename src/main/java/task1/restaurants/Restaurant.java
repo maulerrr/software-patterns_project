@@ -71,7 +71,7 @@ public abstract class Restaurant implements FoodCookingTracker, StaffEnroller, S
 
     @Override
     public void detach(Observer observer) {
-        staffSubscribers.remove(observer);
+        staffSubscribers.remove((Staff)observer);
     }
 
     @Override
@@ -86,7 +86,7 @@ public abstract class Restaurant implements FoodCookingTracker, StaffEnroller, S
 
     @Override
     public void unsubscribe(Observer observer) {
-        restaurantSubscribers.remove(observer);
+        restaurantSubscribers.remove((RestaurantSubscriber)observer);
     }
 
     @Override
