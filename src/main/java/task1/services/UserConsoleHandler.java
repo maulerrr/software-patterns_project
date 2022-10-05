@@ -1,5 +1,10 @@
 package task1.services;
 
+import task1.decorators.pizza.*;
+import task1.decorators.pizza.decorated.Barbeque;
+import task1.decorators.pizza.decorated.Chicken;
+import task1.decorators.pizza.decorated.Mushroom;
+import task1.decorators.pizza.decorated.Tomato;
 import task1.delivery.WoltDelivery;
 import task1.delivery.YandexDelivery;
 import task1.helpers.ClockInterval;
@@ -12,6 +17,7 @@ import task1.payment.CashStrategy;
 import task1.payment.CreditCardStrategy;
 import task1.restaurants.KoreanRestaurant;
 import task1.restaurants.MexicanRestaurant;
+import task1.restaurants.PizzeriaRestaurant;
 import task1.restaurants.Restaurant;
 
 import java.time.LocalTime;
@@ -26,10 +32,12 @@ public class UserConsoleHandler {
 
         System.out.println("1. Korean restaurant");
         System.out.println("2. Mexican restaurant");
+        System.out.println("3. Pizzeria restaurant");
+
 
         System.out.print("Enter number of restaurant from the list: ");
         int numberOfRestaurant = sc.nextInt();
-        if(numberOfRestaurant > 2 || numberOfRestaurant <= 0) throw new IllegalStateException("Error! You entered wrong number!");
+        if(numberOfRestaurant > 3 || numberOfRestaurant <= 0) throw new IllegalStateException("Error! You entered wrong number!");
 
 
         switch (numberOfRestaurant) {
@@ -41,7 +49,110 @@ public class UserConsoleHandler {
                 MexicanRestaurant mexicanRestaurant = new MexicanRestaurant();
                 executeDeliverableRestaurant(mexicanRestaurant, sc);
             }
+            case 3 -> {
+                PizzeriaRestaurant pizzeriaRestaurant = new PizzeriaRestaurant();
+                executePizzeriaRestaurant(pizzeriaRestaurant, sc);
+            }
         }
+    }
+
+    private static void executePizzeriaRestaurant(PizzeriaRestaurant pizzeriaRestaurant, Scanner sc) {
+        System.out.println("----------------------------------");
+
+        int tableNumber = getTableChoiceAndReturnTableNumber(sc, pizzeriaRestaurant);
+
+        System.out.println("Here is our pizza menu:");
+
+        int totalPrice = executePizzaChoice(sc, 0);
+
+        System.out.println("----------------------------------");
+        System.out.println("Cooking process:");
+        pizzeriaRestaurant.cookFood(tableNumber);
+
+        System.out.println("----------------------------------");
+
+        getPaymentChoice(pizzeriaRestaurant, sc, totalPrice);
+    }
+
+    private static int executePizzaChoice(Scanner sc, int totalCost) {
+        Pizza pizza = getPizzaChoice(sc);
+        pizza = getToppingsChoice(pizza, sc);
+
+        System.out.println("----------------------------------");
+
+        System.out.println("Your resulted pizza: " + pizza.getDescription());
+
+        System.out.println("Do you want one more pizza? \n" +
+                "1. See pizza's menu \n" +
+                "2. No");
+
+        int makeOrderAgainChoice = sc.nextInt();
+        if(makeOrderAgainChoice > 2 || makeOrderAgainChoice < 0) throw new IllegalStateException("No such choice");
+
+        if(makeOrderAgainChoice == 1) executePizzaChoice(sc, totalCost + pizza.getCost());
+
+        return totalCost;
+    }
+
+    private static Pizza getToppingsChoice(Pizza pizza, Scanner sc) {
+        System.out.println("----------------------------------");
+
+        System.out.println("""
+                Do you like to add some toppings?\s
+                1. See toppings\s
+                2. No""");
+
+        System.out.print("Enter number: ");
+        int isToppingAdded = sc.nextInt();
+        if(isToppingAdded > 2 || isToppingAdded < 0) throw new IllegalStateException("No such choice");
+        if(isToppingAdded == 2) return pizza;
+
+        System.out.println("----------------------------------");
+
+        System.out.println("Toppings menu:");
+        System.out.println("""
+                1. Barbeque sauce\s
+                2. Chicken\s
+                3. Mushroom\s
+                4. Fresh tomatoes""");
+
+        System.out.println("----------------------------------");
+        System.out.print("Enter topping's number: ");
+        int toppingChoice = sc.nextInt();
+        if(toppingChoice > 4 || toppingChoice < 0) throw new IllegalStateException("No such choice");
+
+        switch (toppingChoice){
+            case 1 -> pizza = new Barbeque(pizza);
+            case 2 -> pizza = new Chicken(pizza);
+            case 3 -> pizza = new Mushroom(pizza);
+            case 4 -> pizza = new Tomato(pizza);
+        }
+
+        return getToppingsChoice(pizza, sc);
+    }
+
+    private static Pizza getPizzaChoice(Scanner sc) {
+        System.out.println("----------------------------------");
+        Pizza pizza = new SimplePizza("Simple pizza");
+        System.out.println("Pizza menu:");
+        System.out.println("""
+                1. Pepperoni\s
+                2. Margaritta\s
+                3. Diablo\s
+                4. Pesto""");
+
+        System.out.print("Enter pizza's number: ");
+        int pizzaChoice = sc.nextInt();
+        if(pizzaChoice > 4 || pizzaChoice < 0) throw new IllegalStateException("No such choice");
+
+        switch (pizzaChoice){
+            case 1 -> pizza = new Pepperoni("Pepperoni pizza");
+            case 2 -> pizza = new Margaritta("Margaritta pizza");
+            case 3 -> pizza = new Diablo("Diablo pizza");
+            case 4 -> pizza = new Pesto("Pesto pizza");
+        }
+
+        return pizza;
     }
 
     private static void executeDeliverableRestaurant(MexicanRestaurant restaurant, Scanner sc) {
@@ -54,7 +165,7 @@ public class UserConsoleHandler {
 
             System.out.println("----------------------------------");
 
-            getPaymentChoice(restaurant, sc);
+            getPaymentChoice(restaurant, sc, 0);
 
             System.out.println("----------------------------------");
             restaurant.deliver(deliverySubscriber.get());
@@ -118,10 +229,10 @@ public class UserConsoleHandler {
 
         System.out.println("----------------------------------");
 
-        getPaymentChoice(restaurant, sc);
+        getPaymentChoice(restaurant, sc, 0);
     }
 
-    private static void getPaymentChoice(Restaurant restaurant, Scanner sc) {
+    private static void getPaymentChoice(Restaurant restaurant, Scanner sc, int totalPrice) {
         System.out.println("How do you want to pay for food?");
         System.out.println("1. Cash");
         System.out.println("2. Credit card");
@@ -137,11 +248,16 @@ public class UserConsoleHandler {
 
         System.out.println("----------------------------------");
 
-        int maxPrice = 20000;
-        int minPrice = 2000;
-        int price = (int)(Math.random()*(maxPrice-minPrice+1)+minPrice);
-        System.out.println("Your bill: " + price + "tg");
-        restaurant.pay(price);
+        if(totalPrice > 0) {
+            System.out.println("Your bill: KZT" + totalPrice );
+            restaurant.pay(totalPrice);
+        } else {
+            int maxPrice = 20000;
+            int minPrice = 2000;
+            int price = (int)(Math.random()*(maxPrice-minPrice+1)+minPrice);
+            System.out.println("Your bill: KZT" + price );
+            restaurant.pay(price);
+        }
     }
 
     private static int getTableChoiceAndReturnTableNumber(Scanner sc, Restaurant restaurant) {

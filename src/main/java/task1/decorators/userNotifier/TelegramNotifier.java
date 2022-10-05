@@ -3,9 +3,14 @@ package task1.decorators.userNotifier;
 public class TelegramNotifier implements UserNotifierDecorator{
     private UserNotifier userNotifier;
 
+    public TelegramNotifier(UserNotifier userNotifier) {
+        this.userNotifier = userNotifier;
+    }
+
     public void setUserNotifier(UserNotifier userNotifier) {
         this.userNotifier = userNotifier;
     }
+
 
     @Override
     public String sendNotification() {

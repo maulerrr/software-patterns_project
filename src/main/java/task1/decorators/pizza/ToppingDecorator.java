@@ -1,6 +1,14 @@
 package task1.decorators.pizza;
 
-public interface ToppingDecorator {
-    String getDescription();
-    Integer getCost();
+public class ToppingDecorator extends Pizza {
+
+
+    public String getDescription(){
+
+        return null;
+    }
+    public int getCost(){
+
+        return 0;
+    }
 }

@@ -1,8 +1,12 @@
+import task1.decorators.pizza.*;
+import task1.decorators.pizza.decorated.Barbeque;
+import task1.decorators.pizza.decorated.Chicken;
+import task1.decorators.pizza.decorated.Mushroom;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import static task1.services.ManagerConsoleHandler.handleManagerChoice;
 import static task1.services.ManagerConsoleHandler.loginManagerIntoSystem;
 import static task1.services.UserConsoleHandler.handleUserChoice;
 
@@ -15,6 +19,7 @@ public class Main {
         //Password: 1234
 
         handleUserLogin(sc);
+
     }
 
     public static void handleUserLogin(Scanner sc) {
@@ -26,7 +31,7 @@ public class Main {
         System.out.println("Choose your role: ");
 
         System.out.println("1. Manager");
-        System.out.println("2. User");
+        System.out.println("2. Restaurant customer");
 
         System.out.print("Enter number: ");
         int choiceNumber = sc.nextInt();
