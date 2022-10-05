@@ -29,7 +29,7 @@ public class UserConsoleHandler {
 
         System.out.print("Enter number of restaurant from the list: ");
         int numberOfRestaurant = sc.nextInt();
-        if(numberOfRestaurant > 2) throw new IllegalStateException("Error! You entered wrong number!");
+        if(numberOfRestaurant > 2 || numberOfRestaurant <= 0) throw new IllegalStateException("Error! You entered wrong number!");
 
 
         switch (numberOfRestaurant) {
@@ -82,7 +82,7 @@ public class UserConsoleHandler {
 
             System.out.print("Enter number: ");
             int deliveryChoice = sc.nextInt();
-            if(deliveryChoice > 2) throw new IllegalStateException("Error! You entered wrong number!");
+            if(deliveryChoice > 2 || deliveryChoice <= 0) throw new IllegalStateException("Error! You entered wrong number!");
 
             switch (deliveryChoice) {
                 case 1 -> restaurant.setDeliverStrategy(new YandexDelivery());
@@ -128,7 +128,7 @@ public class UserConsoleHandler {
 
         System.out.print("Enter number: ");
         int paymentChoice = sc.nextInt();
-        if(paymentChoice > 2) throw new IllegalStateException("Error! You entered wrong number!");
+        if(paymentChoice > 2 || paymentChoice <= 0) throw new IllegalStateException("Error! You entered wrong number!");
 
         switch (paymentChoice) {
             case 1 -> restaurant.setPaymentStrategy(new CashStrategy());
@@ -153,7 +153,7 @@ public class UserConsoleHandler {
 
         System.out.print("Choose one you like:");
         int tableNumber = sc.nextInt();
-        if(tableNumber > 3 || tableNumber < 0) throw new IllegalStateException("There is no such table");
+        if(tableNumber > 3 || tableNumber <= 0) throw new IllegalStateException("There is no such table");
 
         Table table = new Table(1);
         switch (tableNumber){
@@ -173,7 +173,7 @@ public class UserConsoleHandler {
 
         System.out.print("Enter number: ");
         int isDeafaultMenu = sc.nextInt();
-        if(isDeafaultMenu > 2) throw new IllegalStateException("Error! You entered wrong number!");
+        if(isDeafaultMenu > 2 || isDeafaultMenu <= 0) throw new IllegalStateException("Error! You entered wrong number!");
         System.out.println("----------------------------------");
 
 
@@ -193,8 +193,9 @@ public class UserConsoleHandler {
 
             System.out.print("Enter number: ");
             int menuChoice = sc.nextInt();
+            if(menuChoice <= 0) throw new IllegalStateException("Error! You entered wrong number!");
             if(isTimeOfDayMenuEnabled && menuChoice > 3) throw new IllegalStateException("Error! You entered wrong number!");
-            if(!isTimeOfDayMenuEnabled &&menuChoice > 2) throw new IllegalStateException("Error! You entered wrong number!");
+            if(!isTimeOfDayMenuEnabled && menuChoice > 2) throw new IllegalStateException("Error! You entered wrong number!");
 
             switch (menuChoice) {
                 case 1 -> restaurant.setMenuGenerationStrategy(new SeasonBasedMenuStrategy());
