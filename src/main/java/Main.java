@@ -2,6 +2,10 @@ import task1.decorators.pizza.*;
 import task1.decorators.pizza.decorated.Barbeque;
 import task1.decorators.pizza.decorated.Chicken;
 import task1.decorators.pizza.decorated.Mushroom;
+import task1.decorators.userNotifier.EmailNotifier;
+import task1.decorators.userNotifier.UserNotifier;
+import task1.decorators.userNotifier.decorated.SMSNotifier;
+import task1.decorators.userNotifier.decorated.TelegramNotifier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +23,6 @@ public class Main {
         //Password: 1234
 
         handleUserLogin(sc);
-
     }
 
     public static void handleUserLogin(Scanner sc) {

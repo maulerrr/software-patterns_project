@@ -1,6 +1,9 @@
-package task1.decorators.userNotifier;
+package task1.decorators.userNotifier.decorated;
 
-public class SMSNotifier implements UserNotifierDecorator{
+import task1.decorators.userNotifier.UserNotifier;
+import task1.decorators.userNotifier.UserNotifierDecorator;
+
+public class SMSNotifier extends UserNotifierDecorator {
     private UserNotifier userNotifier;
 
     public SMSNotifier(UserNotifier userNotifier) {
@@ -12,8 +15,7 @@ public class SMSNotifier implements UserNotifierDecorator{
     }
 
 
-    @Override
     public String sendNotification() {
-        return userNotifier.getMessage() + "Notified with SMS";
+        return userNotifier.sendNotification() + ", notified with SMS";
     }
 }

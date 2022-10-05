@@ -5,6 +5,11 @@ import task1.decorators.pizza.decorated.Barbeque;
 import task1.decorators.pizza.decorated.Chicken;
 import task1.decorators.pizza.decorated.Mushroom;
 import task1.decorators.pizza.decorated.Tomato;
+import task1.decorators.userNotifier.EmailNotifier;
+import task1.decorators.userNotifier.UserNotifier;
+import task1.decorators.userNotifier.decorated.FacebookNotifier;
+import task1.decorators.userNotifier.decorated.SMSNotifier;
+import task1.decorators.userNotifier.decorated.TelegramNotifier;
 import task1.delivery.WoltDelivery;
 import task1.delivery.YandexDelivery;
 import task1.helpers.ClockInterval;
@@ -56,6 +61,77 @@ public class UserConsoleHandler {
         }
     }
 
+    private static void executeUserNotifierSendersChoice(Scanner sc) {
+        System.out.println("----------------------------------");
+        System.out.println("""
+                Do you want to get up-to-date news from our services?\s
+                1. Yes\s
+                2. No""");
+
+        int isUserWantNotificationSenders = sc.nextInt();
+        if(isUserWantNotificationSenders > 2 || isUserWantNotificationSenders < 0) throw new IllegalStateException("No such choice");
+
+        if(isUserWantNotificationSenders == 2) return;
+
+        System.out.println("----------------------------------");
+        UserNotifier notifier = new EmailNotifier();
+        System.out.println("""
+                Here is default email notification sender!\s
+                Do you want to add new services?\s
+                1. Yes\s
+                2. No""");
+
+        int isUserWantAddNewNotificationSenders = sc.nextInt();
+        if(isUserWantAddNewNotificationSenders > 2 || isUserWantAddNewNotificationSenders < 0) throw new IllegalStateException("No such choice");
+
+        if(isUserWantAddNewNotificationSenders == 2) {
+            String notifiers = notifier.sendNotification();
+            System.out.println(notifiers);
+        } else{
+            notifier = getUserNotifierSenders(notifier, sc);
+            String notifiers = notifier.sendNotification();
+            System.out.println(notifiers);
+        }
+
+    }
+
+    private static UserNotifier getUserNotifierSenders(UserNotifier notifier, Scanner sc) {
+        System.out.println("----------------------------------");
+
+        System.out.println("Notification services menu:");
+        System.out.println("""
+                1. Facebook notifier\s
+                2. SMS notifier\s
+                3. Telegram notifier""");
+
+        System.out.println("----------------------------------");
+        System.out.print("Enter number: ");
+        int toppingChoice = sc.nextInt();
+        if(toppingChoice > 3 || toppingChoice < 0) throw new IllegalStateException("No such choice");
+
+        switch (toppingChoice){
+            case 1 -> notifier = new FacebookNotifier(notifier);
+            case 2 -> notifier = new SMSNotifier(notifier);
+            case 3 -> notifier = new TelegramNotifier(notifier);
+        }
+
+        System.out.println("----------------------------------");
+
+        System.out.println("""
+                Do you like to add other notification services?\s
+                1. See more\s
+                2. No""");
+
+        System.out.print("Enter number: ");
+        int isToppingAdded = sc.nextInt();
+        if(isToppingAdded > 2 || isToppingAdded < 0) throw new IllegalStateException("No such choice");
+        if(isToppingAdded == 2) return notifier;
+
+        return getUserNotifierSenders(notifier, sc);
+    }
+
+
+
     private static void executePizzeriaRestaurant(PizzeriaRestaurant pizzeriaRestaurant, Scanner sc) {
         System.out.println("----------------------------------");
 
@@ -72,6 +148,8 @@ public class UserConsoleHandler {
         System.out.println("----------------------------------");
 
         getPaymentChoice(pizzeriaRestaurant, sc, totalPrice);
+
+        executeUserNotifierSendersChoice(sc);
     }
 
     private static int executePizzaChoice(Scanner sc, int totalCost) {
@@ -82,9 +160,10 @@ public class UserConsoleHandler {
 
         System.out.println("Your resulted pizza: " + pizza.getDescription());
 
-        System.out.println("Do you want one more pizza? \n" +
-                "1. See pizza's menu \n" +
-                "2. No");
+        System.out.println("""
+                Do you want one more pizza?\s
+                1. See pizza's menu\s
+                2. No""");
 
         int makeOrderAgainChoice = sc.nextInt();
         if(makeOrderAgainChoice > 2 || makeOrderAgainChoice < 0) throw new IllegalStateException("No such choice");
@@ -170,6 +249,8 @@ public class UserConsoleHandler {
             System.out.println("----------------------------------");
             restaurant.deliver(deliverySubscriber.get());
 
+            executeUserNotifierSendersChoice(sc);
+
         } else {
             executeDefaultRestaurant(restaurant, sc);
         }
@@ -230,6 +311,8 @@ public class UserConsoleHandler {
         System.out.println("----------------------------------");
 
         getPaymentChoice(restaurant, sc, 0);
+
+        executeUserNotifierSendersChoice(sc);
     }
 
     private static void getPaymentChoice(Restaurant restaurant, Scanner sc, int totalPrice) {
@@ -261,6 +344,8 @@ public class UserConsoleHandler {
     }
 
     private static int getTableChoiceAndReturnTableNumber(Scanner sc, Restaurant restaurant) {
+        System.out.println("----------------------------------");
+
         System.out.println("There are 3 available tables.");
 
         System.out.println("1. Table 1");
@@ -288,8 +373,8 @@ public class UserConsoleHandler {
         System.out.println("If yes press 1, unless press 2");
 
         System.out.print("Enter number: ");
-        int isDeafaultMenu = sc.nextInt();
-        if(isDeafaultMenu > 2 || isDeafaultMenu <= 0) throw new IllegalStateException("Error! You entered wrong number!");
+        int isDefaultMenu = sc.nextInt();
+        if(isDefaultMenu > 2 || isDefaultMenu <= 0) throw new IllegalStateException("Error! You entered wrong number!");
         System.out.println("----------------------------------");
 
 
@@ -298,7 +383,7 @@ public class UserConsoleHandler {
 
         boolean isTimeOfDayMenuEnabled = morning.contains(timeAtNow);
 
-        if(isDeafaultMenu == 1) {
+        if(isDefaultMenu == 1) {
             System.out.println("Choose menu:");
             System.out.println("1. Season-based menu ");
             System.out.println("2. Price-ranged menu ");

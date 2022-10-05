@@ -1,14 +1,13 @@
 package task1.decorators.pizza;
 
 public class ToppingDecorator extends Pizza {
-
+    Pizza pizza;
 
     public String getDescription(){
 
-        return null;
+        return pizza.getDescription();
     }
     public int getCost(){
-
-        return 0;
+        return pizza.getCost();
     }
 }

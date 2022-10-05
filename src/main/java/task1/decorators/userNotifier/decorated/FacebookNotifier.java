@@ -1,6 +1,9 @@
-package task1.decorators.userNotifier;
+package task1.decorators.userNotifier.decorated;
 
-public class FacebookNotifier implements UserNotifierDecorator{
+import task1.decorators.userNotifier.UserNotifier;
+import task1.decorators.userNotifier.UserNotifierDecorator;
+
+public class FacebookNotifier extends UserNotifierDecorator {
     private UserNotifier userNotifier;
 
     public FacebookNotifier(UserNotifier userNotifier) {
@@ -12,8 +15,7 @@ public class FacebookNotifier implements UserNotifierDecorator{
     }
 
 
-    @Override
     public String sendNotification() {
-        return userNotifier.getMessage() + ", Notified by Facebook!";
+        return userNotifier.sendNotification() + ", notified by Facebook";
     }
 }

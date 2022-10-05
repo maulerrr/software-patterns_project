@@ -1,6 +1,9 @@
-package task1.decorators.userNotifier;
+package task1.decorators.userNotifier.decorated;
 
-public class TelegramNotifier implements UserNotifierDecorator{
+import task1.decorators.userNotifier.UserNotifier;
+import task1.decorators.userNotifier.UserNotifierDecorator;
+
+public class TelegramNotifier extends UserNotifierDecorator {
     private UserNotifier userNotifier;
 
     public TelegramNotifier(UserNotifier userNotifier) {
@@ -12,8 +15,7 @@ public class TelegramNotifier implements UserNotifierDecorator{
     }
 
 
-    @Override
     public String sendNotification() {
-        return "Notified by Telegram!";
+        return userNotifier.sendNotification() + ", notified with Telegram";
     }
 }
