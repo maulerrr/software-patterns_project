@@ -1,10 +1,7 @@
 package task1.services;
 
 import task1.decorators.pizza.*;
-import task1.decorators.pizza.decorated.Barbeque;
-import task1.decorators.pizza.decorated.Chicken;
-import task1.decorators.pizza.decorated.Mushroom;
-import task1.decorators.pizza.decorated.Tomato;
+import task1.decorators.pizza.decorated.*;
 import task1.decorators.userNotifier.EmailNotifier;
 import task1.decorators.userNotifier.UserNotifier;
 import task1.decorators.userNotifier.decorated.FacebookNotifier;
@@ -20,10 +17,7 @@ import task1.observer.DeliverySubscriber;
 import task1.observer.Table;
 import task1.payment.CashStrategy;
 import task1.payment.CreditCardStrategy;
-import task1.restaurants.KoreanRestaurant;
-import task1.restaurants.MexicanRestaurant;
-import task1.restaurants.PizzeriaRestaurant;
-import task1.restaurants.Restaurant;
+import task1.restaurants.*;
 
 import java.time.LocalTime;
 import java.util.Optional;
@@ -134,20 +128,105 @@ public class UserConsoleHandler {
 
     private static void executePizzeriaRestaurant(PizzeriaRestaurant pizzeriaRestaurant, Scanner sc) {
         int tableNumber = getTableChoiceAndReturnTableNumber(sc, pizzeriaRestaurant);
-
-        System.out.println("Here is our pizza menu:");
-
-        int totalPrice = executePizzaChoice(sc, 0);
-
-        System.out.println("----------------------------------");
-        System.out.println("Cooking process:");
-        pizzeriaRestaurant.cookFood(tableNumber);
-
         System.out.println("----------------------------------");
 
-        getPaymentChoice(pizzeriaRestaurant, sc, totalPrice);
+        System.out.println("Choose option:");
+        System.out.println("" +
+                "1. See our menu \n" +
+                "2. Custom pizza");
 
-        executeUserNotifierSendersChoice(sc);
+        System.out.print("Enter number: ");
+        int menuChoice = sc.nextInt();
+        if(menuChoice > 2 || menuChoice <= 0) throw new IllegalStateException("Error! You entered wrong number!");
+
+        switch (menuChoice) {
+            case 1 -> {
+                System.out.println("Here is our pizza menu:");
+
+                int totalPrice = executePizzaChoice(sc, 0);
+
+                System.out.println("----------------------------------");
+                System.out.println("Cooking process:");
+                pizzeriaRestaurant.cookFood(tableNumber);
+
+                System.out.println("----------------------------------");
+
+                getPaymentChoice(pizzeriaRestaurant, sc, totalPrice);
+                executeUserNotifierSendersChoice(sc);
+            }
+            case 2 -> {
+                System.out.println("----------------------------------");
+                System.out.println("Here is our pizza constructor! \n" +
+                        "You can choose any ingredients you want");
+
+                int totalPrice = executePizzaConstructor(sc, 0);
+
+                System.out.println("----------------------------------");
+                System.out.println("Cooking process:");
+                pizzeriaRestaurant.cookFood(tableNumber);
+
+                System.out.println("----------------------------------");
+
+                getPaymentChoice(pizzeriaRestaurant, sc, totalPrice);
+                executeUserNotifierSendersChoice(sc);
+            }
+        }
+    }
+
+    private static int executePizzaConstructor(Scanner sc, int totalCost) {
+        Pizza simplePizza = new SimplePizza("Dough", "Custom pizza");
+
+        simplePizza = getToppingsConstructorChoice(simplePizza, sc);
+
+        System.out.println("----------------------------------");
+
+        System.out.println("Your pizza: " + simplePizza.getName());
+        System.out.println("Ingredients with toppings: " + simplePizza.getDescription());
+
+        return totalCost + simplePizza.getCost();
+    }
+
+    private static Pizza getToppingsConstructorChoice(Pizza pizza, Scanner sc) {
+        System.out.println("----------------------------------");
+
+        System.out.println("Toppings menu:");
+        System.out.println("""
+                1. Barbeque sauce - KZT 200\s
+                2. Chicken - KZT 200\s
+                3. Mushroom - KZT 200\s
+                4. Fresh tomatoes - KZT 200 \s
+                5. Mozzarella - KZT 200 \s
+                6. Pineapple - KZT 200 \s
+                7. Sausage - KZT 200""");
+
+        System.out.println("----------------------------------");
+        System.out.print("Enter topping's number: ");
+        int toppingChoice = sc.nextInt();
+        if(toppingChoice > 7 || toppingChoice < 0) throw new IllegalStateException("No such choice");
+
+        switch (toppingChoice){
+            case 1 -> pizza = new Barbeque(pizza);
+            case 2 -> pizza = new Chicken(pizza);
+            case 3 -> pizza = new Mushroom(pizza);
+            case 4 -> pizza = new Tomato(pizza);
+            case 5 -> pizza = new Mozzarella(pizza);
+            case 6 -> pizza = new Pineapple(pizza);
+            case 7 -> pizza = new Sausage(pizza);
+        }
+
+        System.out.println("----------------------------------");
+
+        System.out.println("""
+                Do you like to add some toppings?\s
+                1. See toppings\s
+                2. No""");
+
+        System.out.print("Enter number: ");
+        int isToppingAdded = sc.nextInt();
+        if(isToppingAdded > 2 || isToppingAdded < 0) throw new IllegalStateException("No such choice");
+        if(isToppingAdded == 2) return pizza;
+
+        return getToppingsConstructorChoice(pizza, sc);
     }
 
     private static int executePizzaChoice(Scanner sc, int totalCost) {
@@ -159,18 +238,7 @@ public class UserConsoleHandler {
         System.out.println("Your pizza: " + pizza.getName());
         System.out.println("Ingredients with toppings: " + pizza.getDescription());
 
-        System.out.println("""
-                Do you want one more pizza?\s
-                1. See pizza's menu\s
-                2. No""");
-
-        int makeOrderAgainChoice = sc.nextInt();
-        if(makeOrderAgainChoice > 2 || makeOrderAgainChoice < 0) throw new IllegalStateException("No such choice");
-
-        int totalCostAtEachStep = totalCost + pizza.getCost();
-        if(makeOrderAgainChoice == 1) executePizzaChoice(sc, totalCostAtEachStep);
-
-        return totalCostAtEachStep;
+        return totalCost + pizza.getCost();
     }
 
     private static Pizza getToppingsChoice(Pizza pizza, Scanner sc) {
