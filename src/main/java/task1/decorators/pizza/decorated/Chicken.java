@@ -17,6 +17,10 @@ public class Chicken extends ToppingDecorator {
     }
 
     @Override
+    public String getName() {
+        return pizza.getName();
+    }
+    @Override
     public int getCost() {
         return pizza.getCost() + cost;
     }

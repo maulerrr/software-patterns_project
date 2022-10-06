@@ -15,6 +15,11 @@ public class Barbeque extends ToppingDecorator {
     public String getDescription() {
         return pizza.getDescription() + ", barbeque";
     }
+    @Override
+    public String getName() {
+        return pizza.getName();
+    }
+
 
     @Override
     public int getCost() {

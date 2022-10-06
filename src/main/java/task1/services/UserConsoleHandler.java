@@ -158,7 +158,8 @@ public class UserConsoleHandler {
 
         System.out.println("----------------------------------");
 
-        System.out.println("Your resulted pizza: " + pizza.getDescription());
+        System.out.println("Your pizza: " + pizza.getName());
+        System.out.println("Ingredients with toppings: " + pizza.getDescription());
 
         System.out.println("""
                 Do you want one more pizza?\s
@@ -168,9 +169,10 @@ public class UserConsoleHandler {
         int makeOrderAgainChoice = sc.nextInt();
         if(makeOrderAgainChoice > 2 || makeOrderAgainChoice < 0) throw new IllegalStateException("No such choice");
 
-        if(makeOrderAgainChoice == 1) executePizzaChoice(sc, totalCost + pizza.getCost());
+        int totalCostAtEachStep = totalCost + pizza.getCost();
+        if(makeOrderAgainChoice == 1) executePizzaChoice(sc, totalCostAtEachStep);
 
-        return totalCost;
+        return totalCostAtEachStep;
     }
 
     private static Pizza getToppingsChoice(Pizza pizza, Scanner sc) {
@@ -190,10 +192,10 @@ public class UserConsoleHandler {
 
         System.out.println("Toppings menu:");
         System.out.println("""
-                1. Barbeque sauce\s
-                2. Chicken\s
-                3. Mushroom\s
-                4. Fresh tomatoes""");
+                1. Barbeque sauce - KZT 200\s
+                2. Chicken - KZT 200\s
+                3. Mushroom - KZT 200\s
+                4. Fresh tomatoes - KZT 200""");
 
         System.out.println("----------------------------------");
         System.out.print("Enter topping's number: ");
@@ -212,23 +214,24 @@ public class UserConsoleHandler {
 
     private static Pizza getPizzaChoice(Scanner sc) {
         System.out.println("----------------------------------");
-        Pizza pizza = new SimplePizza("Simple pizza");
+        Pizza pizza = new SimplePizza("Cheese, tomato sauce", "Simple pizza");
         System.out.println("Pizza menu:");
         System.out.println("""
-                1. Pepperoni\s
-                2. Margaritta\s
-                3. Diablo\s
-                4. Pesto""");
+                1. Pepperoni - KZT 2100 \s
+                2. Margaritta - KZT 2000\s
+                3. Diablo - KZT 2300\s
+                4. Pesto - KZT 2700""");
 
         System.out.print("Enter pizza's number: ");
         int pizzaChoice = sc.nextInt();
         if(pizzaChoice > 4 || pizzaChoice < 0) throw new IllegalStateException("No such choice");
 
         switch (pizzaChoice){
-            case 1 -> pizza = new Pepperoni("Pepperoni pizza");
-            case 2 -> pizza = new Margaritta("Margaritta pizza");
-            case 3 -> pizza = new Diablo("Diablo pizza");
-            case 4 -> pizza = new Pesto("Pesto pizza");
+            case 1 -> pizza = new Pepperoni("Tomato sauce, cheese, sausages","Pepperoni pizza");
+            case 2 -> pizza = new Margaritta("Tomato sauce, cheese, tomatoes","Margaritta pizza");
+            case 3 -> pizza = new Diablo("Jalapeno, spicy sauce, pepper, chicken","Diablo pizza");
+            case 4 -> pizza = new Pesto("Chicken, pesto sauce, mozzarella, brynza","Pesto pizza");
+
         }
 
         return pizza;
@@ -332,13 +335,13 @@ public class UserConsoleHandler {
         System.out.println("----------------------------------");
 
         if(totalPrice > 0) {
-            System.out.println("Your bill: KZT" + totalPrice );
+            System.out.println("Your bill: KZT " + totalPrice );
             restaurant.pay(totalPrice);
         } else {
             int maxPrice = 20000;
             int minPrice = 2000;
             int price = (int)(Math.random()*(maxPrice-minPrice+1)+minPrice);
-            System.out.println("Your bill: KZT" + price );
+            System.out.println("Your bill: KZT " + price );
             restaurant.pay(price);
         }
     }

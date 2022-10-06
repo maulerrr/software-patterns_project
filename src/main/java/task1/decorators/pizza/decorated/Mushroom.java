@@ -5,7 +5,7 @@ import task1.decorators.pizza.ToppingDecorator;
 
 public class Mushroom extends ToppingDecorator {
     private Pizza pizza;
-    private final int cost = 300;
+    private final int cost = 200;
 
     public Mushroom(Pizza pizza) {
         this.pizza = pizza;
@@ -16,6 +16,11 @@ public class Mushroom extends ToppingDecorator {
         return pizza.getDescription() + ", mushroom";
     }
 
+
+    @Override
+    public String getName() {
+        return pizza.getName();
+    }
     @Override
     public int getCost() {
         return pizza.getCost() + cost;
