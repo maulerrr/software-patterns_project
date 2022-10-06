@@ -1,13 +1,14 @@
 package task1.decorators.pizza;
 
 public class Diablo extends Pizza{
-    public Diablo(String name, String description) {
-        this.description = description;
+    private final int cost = 2300;
+    public Diablo(String description, String name) {
         this.name = name;
+        this.description = description;
     }
 
     @Override
     public int getCost() {
-        return 130;
+        return cost;
     }
 }

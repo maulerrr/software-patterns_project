@@ -1,5 +1,7 @@
 package task1.decorators.userNotifier;
 
-public interface UserNotifierDecorator {
-    public String sendNotification();
+public class UserNotifierDecorator extends UserNotifier {
+    public String getMessage() {
+        return super.sendNotification();
+    }
 }
