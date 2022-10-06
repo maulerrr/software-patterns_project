@@ -133,8 +133,6 @@ public class UserConsoleHandler {
 
 
     private static void executePizzeriaRestaurant(PizzeriaRestaurant pizzeriaRestaurant, Scanner sc) {
-        System.out.println("----------------------------------");
-
         int tableNumber = getTableChoiceAndReturnTableNumber(sc, pizzeriaRestaurant);
 
         System.out.println("Here is our pizza menu:");
