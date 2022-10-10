@@ -50,7 +50,8 @@ public class UserConsoleHandler {
             }
             case 3 -> {
                 PizzeriaRestaurant pizzeriaRestaurant = new PizzeriaRestaurant();
-                executePizzeriaRestaurant(pizzeriaRestaurant, sc);
+                PizzaOrder pizzaOrder = new PizzaOrder();
+                executePizzeriaRestaurant(pizzeriaRestaurant, pizzaOrder, sc);
             }
         }
     }
@@ -126,10 +127,23 @@ public class UserConsoleHandler {
 
 
 
-    private static void executePizzeriaRestaurant(PizzeriaRestaurant pizzeriaRestaurant, Scanner sc) {
+    private static void executePizzeriaRestaurant(PizzeriaRestaurant pizzeriaRestaurant, PizzaOrder pizzaOrder, Scanner sc) {
         int tableNumber = getTableChoiceAndReturnTableNumber(sc, pizzeriaRestaurant);
         System.out.println("----------------------------------");
 
+        executeOrderPizzaMenu(sc, pizzaOrder);
+
+
+        System.out.println("Cooking process:");
+        pizzeriaRestaurant.cookFood(tableNumber);
+
+        System.out.println("----------------------------------");
+
+        getPaymentChoice(pizzeriaRestaurant, sc, pizzaOrder.getTotalPriceOfOrder());
+        executeUserNotifierSendersChoice(sc);
+    }
+
+    private static void executeOrderPizzaMenu(Scanner sc, PizzaOrder pizzaOrder) {
         System.out.println("Choose option:");
         System.out.println("" +
                 "1. See our menu \n" +
@@ -144,15 +158,20 @@ public class UserConsoleHandler {
                 System.out.println("Here is our pizza menu:");
 
                 int totalPrice = executePizzaChoice(sc, 0);
+                pizzaOrder.addToTotalPrice(totalPrice);
 
                 System.out.println("----------------------------------");
-                System.out.println("Cooking process:");
-                pizzeriaRestaurant.cookFood(tableNumber);
+                System.out.println("""
+                        Do you want to order another pizza?\s
+                        1. Yes\s
+                        2. No""");
+                System.out.print("Enter option: ");
+                int orderAgainChoice = sc.nextInt();
 
-                System.out.println("----------------------------------");
+                if(orderAgainChoice == 1){
+                    executeOrderPizzaMenu(sc, pizzaOrder);
+                }
 
-                getPaymentChoice(pizzeriaRestaurant, sc, totalPrice);
-                executeUserNotifierSendersChoice(sc);
             }
             case 2 -> {
                 System.out.println("----------------------------------");
@@ -160,15 +179,19 @@ public class UserConsoleHandler {
                         "You can choose any ingredients you want");
 
                 int totalPrice = executePizzaConstructor(sc, 0);
+                pizzaOrder.addToTotalPrice(totalPrice);
 
                 System.out.println("----------------------------------");
-                System.out.println("Cooking process:");
-                pizzeriaRestaurant.cookFood(tableNumber);
+                System.out.println("""
+                        Do you want to order another pizza?\s
+                        1. Yes\s
+                        2. No""");
+                System.out.print("Enter option: ");
+                int orderAgainChoice = sc.nextInt();
 
-                System.out.println("----------------------------------");
-
-                getPaymentChoice(pizzeriaRestaurant, sc, totalPrice);
-                executeUserNotifierSendersChoice(sc);
+                if(orderAgainChoice == 1){
+                    executeOrderPizzaMenu(sc, pizzaOrder);
+                }
             }
         }
     }
