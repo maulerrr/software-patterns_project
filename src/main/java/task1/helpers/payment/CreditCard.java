@@ -1,6 +1,6 @@
-package task1.payment;
+package task1.helpers.payment;
 
-public class CreditCardStrategy implements PaymentStrategy, Cashback{
+public class CreditCard implements Payment, Cashback{
     @Override
     public void pay(int price) {
         System.out.println("Payed by credit card");

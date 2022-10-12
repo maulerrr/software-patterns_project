@@ -6,8 +6,8 @@ import task1.observables.FoodCookingTracker;
 import task1.observables.StaffEnroller;
 import task1.observables.SubscribersNotificationSender;
 import task1.observer.*;
-import task1.payment.CashStrategy;
-import task1.payment.PaymentStrategy;
+import task1.helpers.payment.Cash;
+import task1.helpers.payment.Payment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class Restaurant implements FoodCookingTracker, StaffEnroller, SubscribersNotificationSender {
-    private PaymentStrategy paymentStrategy;
+    private Payment payment;
     private MenuGenerationStrategy menuGenerationStrategy;
 
     private final List<Staff> staffSubscribers;
@@ -24,7 +24,7 @@ public abstract class Restaurant implements FoodCookingTracker, StaffEnroller, S
     private final Kitchen kitchen;
 
     public Restaurant () {
-        this.paymentStrategy = new CashStrategy();
+        this.payment = new Cash();
         this.menuGenerationStrategy = new PriceRangeMenuStrategy();
         this.kitchen = new Kitchen();
         this.staffSubscribers = new ArrayList<>();
@@ -94,8 +94,8 @@ public abstract class Restaurant implements FoodCookingTracker, StaffEnroller, S
         restaurantSubscribers.forEach(observer -> observer.update(message));
     }
 
-    public void setPaymentStrategy(PaymentStrategy paymentStrategy) {
-        this.paymentStrategy = paymentStrategy;
+    public void setPaymentStrategy(Payment payment) {
+        this.payment = payment;
     }
     public void setMenuGenerationStrategy(MenuGenerationStrategy menuGenerationStrategy) {
         this.menuGenerationStrategy = menuGenerationStrategy;
@@ -108,7 +108,7 @@ public abstract class Restaurant implements FoodCookingTracker, StaffEnroller, S
     }
 
     public void pay(int price){
-        paymentStrategy.pay(price);
+        payment.pay(price);
     }
     public void generateMenu(){
         menuGenerationStrategy.generateMenu();
