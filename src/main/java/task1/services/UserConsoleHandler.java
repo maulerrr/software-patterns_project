@@ -7,16 +7,14 @@ import task1.decorators.userNotifier.UserNotifier;
 import task1.decorators.userNotifier.decorated.FacebookNotifier;
 import task1.decorators.userNotifier.decorated.SMSNotifier;
 import task1.decorators.userNotifier.decorated.TelegramNotifier;
-import task1.delivery.WoltDelivery;
-import task1.delivery.YandexDelivery;
+
+import task1.factory.*;
 import task1.helpers.ClockInterval;
 import task1.menu.PriceRangeMenuStrategy;
 import task1.menu.SeasonBasedMenuStrategy;
 import task1.menu.TimeOfDayMenuStrategy;
 import task1.observer.DeliverySubscriber;
 import task1.observer.Table;
-import task1.payment.CashStrategy;
-import task1.payment.CreditCardStrategy;
 import task1.restaurants.*;
 
 import java.time.LocalTime;
@@ -26,6 +24,7 @@ import java.util.Scanner;
 public class UserConsoleHandler {
     public static void handleUserChoice(Scanner sc) {
         System.out.println("----------------------------------");
+
 
         System.out.println("Choose restaurant where you want to get food!");
 
@@ -39,18 +38,23 @@ public class UserConsoleHandler {
         if(numberOfRestaurant > 3 || numberOfRestaurant <= 0) throw new IllegalStateException("Error! You entered wrong number!");
 
 
+
         switch (numberOfRestaurant) {
             case 1 -> {
-                KoreanRestaurant koreanRestaurant = new KoreanRestaurant();
+                KoreanRestaurant koreanRestaurant = (KoreanRestaurant) RestaurantsFactory
+                        .getRestaurant(RestaurantNames.KOREAN);
                 executeDefaultRestaurant(koreanRestaurant, sc);
             }
             case 2 -> {
-                MexicanRestaurant mexicanRestaurant = new MexicanRestaurant();
+                MexicanRestaurant mexicanRestaurant = (MexicanRestaurant) RestaurantsFactory
+                        .getRestaurant(RestaurantNames.MEXICAN);
                 executeDeliverableRestaurant(mexicanRestaurant, sc);
             }
             case 3 -> {
-                PizzeriaRestaurant pizzeriaRestaurant = new PizzeriaRestaurant();
-                executePizzeriaRestaurant(pizzeriaRestaurant, sc);
+                PizzeriaRestaurant pizzeriaRestaurant = (PizzeriaRestaurant) RestaurantsFactory
+                        .getRestaurant(RestaurantNames.PIZZERIA);
+                PizzaOrder pizzaOrder = new PizzaOrder();
+                executePizzeriaRestaurant(pizzeriaRestaurant, pizzaOrder, sc);
             }
         }
     }
@@ -126,10 +130,23 @@ public class UserConsoleHandler {
 
 
 
-    private static void executePizzeriaRestaurant(PizzeriaRestaurant pizzeriaRestaurant, Scanner sc) {
+    private static void executePizzeriaRestaurant(PizzeriaRestaurant pizzeriaRestaurant, PizzaOrder pizzaOrder, Scanner sc) {
         int tableNumber = getTableChoiceAndReturnTableNumber(sc, pizzeriaRestaurant);
         System.out.println("----------------------------------");
 
+        executeOrderPizzaMenu(sc, pizzaOrder);
+
+
+        System.out.println("Cooking process:");
+        pizzeriaRestaurant.cookFood(tableNumber);
+
+        System.out.println("----------------------------------");
+
+        getPaymentChoice(pizzeriaRestaurant, sc, pizzaOrder.getTotalPriceOfOrder());
+        executeUserNotifierSendersChoice(sc);
+    }
+
+    private static void executeOrderPizzaMenu(Scanner sc, PizzaOrder pizzaOrder) {
         System.out.println("Choose option:");
         System.out.println("" +
                 "1. See our menu \n" +
@@ -144,15 +161,20 @@ public class UserConsoleHandler {
                 System.out.println("Here is our pizza menu:");
 
                 int totalPrice = executePizzaChoice(sc, 0);
+                pizzaOrder.addToTotalPrice(totalPrice);
 
                 System.out.println("----------------------------------");
-                System.out.println("Cooking process:");
-                pizzeriaRestaurant.cookFood(tableNumber);
+                System.out.println("""
+                        Do you want to order another pizza?\s
+                        1. Yes\s
+                        2. No""");
+                System.out.print("Enter option: ");
+                int orderAgainChoice = sc.nextInt();
 
-                System.out.println("----------------------------------");
+                if(orderAgainChoice == 1){
+                    executeOrderPizzaMenu(sc, pizzaOrder);
+                }
 
-                getPaymentChoice(pizzeriaRestaurant, sc, totalPrice);
-                executeUserNotifierSendersChoice(sc);
             }
             case 2 -> {
                 System.out.println("----------------------------------");
@@ -160,15 +182,19 @@ public class UserConsoleHandler {
                         "You can choose any ingredients you want");
 
                 int totalPrice = executePizzaConstructor(sc, 0);
+                pizzaOrder.addToTotalPrice(totalPrice);
 
                 System.out.println("----------------------------------");
-                System.out.println("Cooking process:");
-                pizzeriaRestaurant.cookFood(tableNumber);
+                System.out.println("""
+                        Do you want to order another pizza?\s
+                        1. Yes\s
+                        2. No""");
+                System.out.print("Enter option: ");
+                int orderAgainChoice = sc.nextInt();
 
-                System.out.println("----------------------------------");
-
-                getPaymentChoice(pizzeriaRestaurant, sc, totalPrice);
-                executeUserNotifierSendersChoice(sc);
+                if(orderAgainChoice == 1){
+                    executeOrderPizzaMenu(sc, pizzaOrder);
+                }
             }
         }
     }
@@ -340,14 +366,22 @@ public class UserConsoleHandler {
             System.out.println("Choose delivery:");
             System.out.println("1. Yandex food");
             System.out.println("2. Wolt");
+            System.out.println("3. Glovo");
+
 
             System.out.print("Enter number: ");
             int deliveryChoice = sc.nextInt();
-            if(deliveryChoice > 2 || deliveryChoice <= 0) throw new IllegalStateException("Error! You entered wrong number!");
+            if(deliveryChoice > 3 || deliveryChoice <= 0) throw new IllegalStateException("Error! You entered wrong number!");
+
+            DeliveryFactory deliveryFactory = new DeliveryFactory();
 
             switch (deliveryChoice) {
-                case 1 -> restaurant.setDeliverStrategy(new YandexDelivery());
-                case 2 -> restaurant.setDeliverStrategy(new WoltDelivery());
+                case 1 -> restaurant.setDeliverStrategy(deliveryFactory.
+                        getDelivery(DeliveryNames.YANDEX));
+                case 2 -> restaurant.setDeliverStrategy(deliveryFactory.
+                        getDelivery(DeliveryNames.WOLT));
+                case 3 -> restaurant.setDeliverStrategy(deliveryFactory.
+                        getDelivery(DeliveryNames.GLOVO));
             }
 
             sc.nextLine();
@@ -388,14 +422,23 @@ public class UserConsoleHandler {
         System.out.println("How do you want to pay for food?");
         System.out.println("1. Cash");
         System.out.println("2. Credit card");
+        System.out.println("3. Apple pay");
+
 
         System.out.print("Enter number: ");
         int paymentChoice = sc.nextInt();
-        if(paymentChoice > 2 || paymentChoice <= 0) throw new IllegalStateException("Error! You entered wrong number!");
+        if(paymentChoice > 3 || paymentChoice <= 0) throw new IllegalStateException("Error! You entered wrong number!");
+
+        PaymentFactory paymentFactory = new PaymentFactory();
 
         switch (paymentChoice) {
-            case 1 -> restaurant.setPaymentStrategy(new CashStrategy());
-            case 2 -> restaurant.setPaymentStrategy(new CreditCardStrategy());
+            case 1 -> restaurant.setPaymentStrategy(paymentFactory
+                    .getPaymentFactory(PaymentNames.CASH));
+            case 2 -> restaurant.setPaymentStrategy(paymentFactory
+                    .getPaymentFactory(PaymentNames.CREDIT_CARD));
+            case 3 -> restaurant.setPaymentStrategy(paymentFactory
+                    .getPaymentFactory(PaymentNames.APPLE_PAY));
+
         }
 
         System.out.println("----------------------------------");

@@ -6,18 +6,18 @@ import task1.observer.Observer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WoltDelivery implements Delivery {
+public class GlovoDelivery implements Delivery{
     private final List<DeliverySubscriber> deliverySubscribers;
     private String name;
     private String Description;
 
-    public WoltDelivery() {
+    public GlovoDelivery() {
         this.deliverySubscribers = new ArrayList<>();
     }
 
     @Override
     public void deliver() {
-        System.out.println("Delivery by Wolt");
+        System.out.println("Delivery by Glovo");
     }
 
     @Override

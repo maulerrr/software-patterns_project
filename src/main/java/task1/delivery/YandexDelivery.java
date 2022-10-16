@@ -6,8 +6,10 @@ import task1.observer.Observer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class YandexDelivery implements DeliveryStrategy{
+public class YandexDelivery implements Delivery {
     private final List<DeliverySubscriber> deliverySubscribers;
+    private String name;
+    private String Description;
 
     public YandexDelivery() {
         this.deliverySubscribers = new ArrayList<>();

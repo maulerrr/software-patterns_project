@@ -38,4 +38,10 @@ public class PizzaOrder {
         setTotalPriceOfOrder(total);
         return total;
     }
+
+    public int addToTotalPrice(int price) {
+        totalPriceOfOrder += price;
+        setTotalPriceOfOrder(totalPriceOfOrder);
+        return totalPriceOfOrder;
+    }
 }

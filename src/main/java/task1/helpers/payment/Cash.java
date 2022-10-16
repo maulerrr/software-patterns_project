@@ -1,6 +1,6 @@
-package task1.payment;
+package task1.helpers.payment;
 
-public class CashStrategy implements PaymentStrategy{
+public class Cash implements Payment {
     @Override
     public void pay(int price) {
         System.out.println("Payed by cash");

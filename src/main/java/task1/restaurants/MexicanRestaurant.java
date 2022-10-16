@@ -1,21 +1,21 @@
 package task1.restaurants;
 
 import task1.delivery.Deliverable;
-import task1.delivery.DeliveryStrategy;
+import task1.delivery.Delivery;
 import task1.delivery.YandexDelivery;
 import task1.observer.DeliverySubscriber;
 
 public class MexicanRestaurant extends Restaurant implements Deliverable {
-    private DeliveryStrategy deliveryStrategy;
+    private Delivery delivery;
     public MexicanRestaurant(){
-        this.deliveryStrategy = new YandexDelivery();
+        this.delivery = new YandexDelivery();
     }
     @Override
     public void deliver(DeliverySubscriber observer) {
-        this.deliveryStrategy.subscribe(observer);
-        this.deliveryStrategy.deliver();
-        this.deliveryStrategy.sendSubscribersNotification("Food delivered to address " + observer.getAddress());
-        this.deliveryStrategy.unsubscribe(observer);
+        this.delivery.subscribe(observer);
+        this.delivery.deliver();
+        this.delivery.sendSubscribersNotification("Food delivered to address " + observer.getAddress());
+        this.delivery.unsubscribe(observer);
     }
 
     @Override
@@ -23,7 +23,7 @@ public class MexicanRestaurant extends Restaurant implements Deliverable {
         getKitchen().cookFood();
     }
 
-    public void setDeliverStrategy(DeliveryStrategy deliveryStrategy){
-        this.deliveryStrategy = deliveryStrategy;
+    public void setDeliverStrategy(Delivery delivery){
+        this.delivery = delivery;
     }
 }
