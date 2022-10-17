@@ -26,7 +26,7 @@ public abstract class Restaurant implements FoodCookingTracker, StaffEnroller, S
     public Restaurant () {
         this.payment = new Cash();
         this.menuGenerationStrategy = new PriceRangeMenuStrategy();
-        this.kitchen = kitchen.getInstance();
+        this.kitchen = Kitchen.getInstance();
         this.staffSubscribers = new ArrayList<>();
         this.restaurantSubscribers = new ArrayList<>();
         this.tables = new HashMap<>();

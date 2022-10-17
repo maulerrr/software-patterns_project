@@ -1,7 +1,7 @@
 package task1.observer;
 
 public class Kitchen implements Observer{
-    private static Kitchen kitchen = new Kitchen();
+    private static Kitchen kitchen;
 
     @Override
     public void update(String message) {
@@ -12,13 +12,11 @@ public class Kitchen implements Observer{
         System.out.println("Kitchen is cooking food.");
     }
 
-    public Kitchen getInstance(){
-        if(Kitchen.kitchen == null){
+    public static Kitchen getInstance(){
+        if(kitchen == null){
             return new Kitchen();
-        } return Kitchen.kitchen;
+        } return kitchen;
     }
 
-    private Kitchen(){
-
-    }
+    private Kitchen(){}
 }
