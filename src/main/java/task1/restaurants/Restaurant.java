@@ -21,12 +21,12 @@ public abstract class Restaurant implements FoodCookingTracker, StaffEnroller, S
     private final List<Staff> staffSubscribers;
     private final List<RestaurantSubscriber> restaurantSubscribers;
     private final Map<Integer, Table> tables;
-    private final Kitchen kitchen;
+    private Kitchen kitchen;
 
     public Restaurant () {
         this.payment = new Cash();
         this.menuGenerationStrategy = new PriceRangeMenuStrategy();
-        this.kitchen = new Kitchen();
+        this.kitchen = kitchen.getInstance();
         this.staffSubscribers = new ArrayList<>();
         this.restaurantSubscribers = new ArrayList<>();
         this.tables = new HashMap<>();
