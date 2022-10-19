@@ -6,6 +6,7 @@ import task1.decorators.userNotifier.EmailNotifier;
 import task1.decorators.userNotifier.UserNotifier;
 import task1.decorators.userNotifier.decorated.SMSNotifier;
 import task1.decorators.userNotifier.decorated.TelegramNotifier;
+import task1.services.DB.DB;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +23,7 @@ public class Main {
         //Username: manager
         //Password: 1234
 
+        DB db = DB.getInstance();
         handleUserLogin(sc);
     }
 
