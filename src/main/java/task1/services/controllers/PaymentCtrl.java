@@ -4,7 +4,6 @@ import task1.services.DB.data.PaymentsRepo;
 import task1.services.DB.data.interfaces.IPaymentRepo;
 import task1.services.DB.models.PaymentCheck;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PaymentCtrl {
@@ -17,7 +16,7 @@ public class PaymentCtrl {
     public String getByID(int id){
         PaymentCheck paymentCheck =paymentRepo.get(id);
 
-        if (paymentCheck==null)
+        if (paymentCheck ==null)
             System.out.println("Check with id = " + id + " does not exist in database!");
         
         return paymentCheck != null ? paymentCheck.toString() : null;
@@ -66,6 +65,8 @@ public class PaymentCtrl {
     public static void main(String[] args) {
         PaymentsRepo paymentsRepo = new PaymentsRepo();
         PaymentCtrl ctrl = new PaymentCtrl(paymentsRepo);
-        System.out.println(ctrl.create(420, 420));
+        System.out.println(ctrl.getAll());
+
+
     }
 }

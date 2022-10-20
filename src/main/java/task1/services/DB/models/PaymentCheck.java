@@ -9,6 +9,29 @@ public class PaymentCheck {
     int product_id;
     Date payment_date;
 
+    int amount;
+    double total_payment;
+
+//    public void setPayment_date(Date payment_date) {
+//        this.payment_date = payment_date;
+//    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public double getTotal_payment() {
+        return total_payment;
+    }
+
+    public void setTotal_payment(double total_payment) {
+        this.total_payment = total_payment;
+    }
+
     public int getPayment_id() {
         return payment_id;
     }
@@ -41,7 +64,8 @@ public class PaymentCheck {
         this.payment_date = new Date
                 (LocalDateTime.now().getYear() - 1900,
                 LocalDateTime.now().getMonthValue() - 1,
-                LocalDateTime.now().getDayOfMonth());
+                LocalDateTime.now().getDayOfMonth()
+                );
     }
 
     public PaymentCheck(){

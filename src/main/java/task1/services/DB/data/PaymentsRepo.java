@@ -91,4 +91,23 @@ public class PaymentsRepo implements IPaymentRepo {
         }
         return false;
     }
+
+    public double calculateTotal(int amount){
+        double total = 0;
+        try {
+            Connection conn = db.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT price FROM products");
+
+            if (rs.next()) {
+                total = rs.getDouble("price") * amount;
+            }
+
+            return total;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return total;
+    }
 }
