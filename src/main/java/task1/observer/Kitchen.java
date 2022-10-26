@@ -1,16 +1,16 @@
 package task1.observer;
 
-import task1.observer.state.KitchenState;
+import task1.states.kitchenstate.FoodCooking;
+import task1.states.kitchenstate.FoodIsDelivering;
+import task1.states.kitchenstate.FoodReady;
+import task1.states.kitchenstate.KitchenState;
 
-public class Kitchen implements Observer, KitchenState {
+public class Kitchen implements Observer {
     private static Kitchen kitchen;
 
-    private Kitchen(){}
-
-    public static Kitchen getInstance(){
-        if (kitchen==null)
-            return new Kitchen();
-        return kitchen;
+    KitchenState kitchenState = new FoodCooking();
+    public void setState(KitchenState kitchenState) {
+        this.kitchenState = kitchenState;
     }
 
     @Override
@@ -18,24 +18,27 @@ public class Kitchen implements Observer, KitchenState {
         System.out.println("Kitchen: " + message);
     }
 
-    public void cookFood() {
-        onStart();
-        onCooking();
-        onCooking();
+
+
+    public static Kitchen getInstance() {
+        if (kitchen == null) {
+            return new Kitchen();
+        }
+        return kitchen;
     }
 
-    @Override
-    public void onStart() {
-        System.out.println("Kitchen started to cook food.");
+    private Kitchen() {
     }
 
-    @Override
-    public void onCooking() {
-        System.out.println("Kitchen is still cooking food.");
+    public void changeState() {
+        if (kitchenState instanceof FoodCooking) {
+            setState(new FoodReady());
+        } else if (kitchenState instanceof FoodReady) {
+            setState(new FoodIsDelivering());
+        }
     }
-
-    @Override
-    public void onCooked() {
-        System.out.println("Kitchen have finished cooking food.");
+    public void doAction(){
+        kitchenState.kitchenStateAction();
     }
 }
+
