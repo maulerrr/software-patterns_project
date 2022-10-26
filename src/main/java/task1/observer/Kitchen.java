@@ -1,16 +1,16 @@
 package task1.observer;
 
-import task1.states.FoodCooking;
-import task1.states.FoodIsDelivering;
-import task1.states.FoodReady;
-import task1.states.State;
+import task1.states.kitchenstate.FoodCooking;
+import task1.states.kitchenstate.FoodIsDelivering;
+import task1.states.kitchenstate.FoodReady;
+import task1.states.kitchenstate.KitchenState;
 
 public class Kitchen implements Observer {
     private static Kitchen kitchen;
 
-    State state = new FoodCooking();
-    public void setState(State state) {
-        this.state = state;
+    KitchenState kitchenState = new FoodCooking();
+    public void setState(KitchenState kitchenState) {
+        this.kitchenState = kitchenState;
     }
 
     @Override
@@ -31,14 +31,14 @@ public class Kitchen implements Observer {
     }
 
     public void changeState() {
-        if (state instanceof FoodCooking) {
+        if (kitchenState instanceof FoodCooking) {
             setState(new FoodReady());
-        } else if (state instanceof FoodReady) {
+        } else if (kitchenState instanceof FoodReady) {
             setState(new FoodIsDelivering());
         }
     }
     public void doAction(){
-        state.doAction();
+        kitchenState.kitchenStateAction();
     }
 }
 
