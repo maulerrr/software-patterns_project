@@ -16,12 +16,34 @@ import task1.menu.TimeOfDayMenuStrategy;
 import task1.observer.DeliverySubscriber;
 import task1.observer.Table;
 import task1.restaurants.*;
+import task1.services.DB.data.CustomerRepo;
+import task1.services.DB.data.PaymentsRepo;
+import task1.services.DB.data.RestaurantsRepo;
+import task1.services.DB.models.Customer;
+import task1.services.DB.models.Product;
+import task1.services.controllers.CustomerCtrl;
+import task1.services.controllers.PaymentCtrl;
+import task1.services.controllers.RestaurantCtrl;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
 public class UserConsoleHandler {
+
+    static int customerID = (int) (Math.random()*10000);          //by default, since no authorization
+
+    static task1.services.DB.models.Restaurant restaurant;
+    static Customer customer;
+
+    static CustomerCtrl customerCtrl = new CustomerCtrl(new CustomerRepo());
+    static RestaurantCtrl restaurantCtrl = new RestaurantCtrl(new RestaurantsRepo());
+    static PaymentCtrl paymentCtrl = new PaymentCtrl(new PaymentsRepo());
+    static List<Product> products = new ArrayList<>();
+
+
     public static void handleUserChoice(Scanner sc) {
         System.out.println("----------------------------------");
 
@@ -37,7 +59,7 @@ public class UserConsoleHandler {
         int numberOfRestaurant = sc.nextInt();
         if(numberOfRestaurant > 3 || numberOfRestaurant <= 0) throw new IllegalStateException("Error! You entered wrong number!");
 
-
+        restaurant = restaurantCtrl.getRestaurant(numberOfRestaurant);
 
         switch (numberOfRestaurant) {
             case 1 -> {
@@ -132,6 +154,9 @@ public class UserConsoleHandler {
 
     private static void executePizzeriaRestaurant(PizzeriaRestaurant pizzeriaRestaurant, PizzaOrder pizzaOrder, Scanner sc) {
         int tableNumber = getTableChoiceAndReturnTableNumber(sc, pizzeriaRestaurant);
+
+        customer = customerCtrl.createCustomer(customerID, tableNumber); //created customer
+
         System.out.println("----------------------------------");
 
         executeOrderPizzaMenu(sc, pizzaOrder);
@@ -146,6 +171,8 @@ public class UserConsoleHandler {
         executeUserNotifierSendersChoice(sc);
     }
 
+
+    //rewrite with ProductHandler
     private static void executeOrderPizzaMenu(Scanner sc, PizzaOrder pizzaOrder) {
         System.out.println("Choose option:");
         System.out.println("" +
@@ -199,6 +226,8 @@ public class UserConsoleHandler {
         }
     }
 
+
+    //creating custom pizza
     private static int executePizzaConstructor(Scanner sc, int totalCost) {
         Pizza simplePizza = new SimplePizza("Dough", "Custom pizza");
 
@@ -212,9 +241,10 @@ public class UserConsoleHandler {
         return totalCost + simplePizza.getCost();
     }
 
+
+    //choosing toppings for custom pizza
     private static Pizza getToppingsConstructorChoice(Pizza pizza, Scanner sc) {
         System.out.println("----------------------------------");
-
         System.out.println("Toppings menu:");
         System.out.println("""
                 1. Barbeque sauce - KZT 200\s
@@ -265,6 +295,7 @@ public class UserConsoleHandler {
         System.out.println("Ingredients with toppings: " + pizza.getDescription());
 
         return totalCost + pizza.getCost();
+
     }
 
     private static Pizza getToppingsChoice(Pizza pizza, Scanner sc) {
@@ -405,6 +436,8 @@ public class UserConsoleHandler {
     private static void executeDefaultRestaurant(Restaurant restaurant, Scanner sc) {
 
         int tableNumber = getTableChoiceAndReturnTableNumber(sc, restaurant);
+        customer = customerCtrl.createCustomer(customerID, tableNumber);
+
 
         getMenuChoice(restaurant, sc);
 
@@ -418,12 +451,14 @@ public class UserConsoleHandler {
         executeUserNotifierSendersChoice(sc);
     }
 
+
+
+    //last piece PaymentCTRL usage
     private static void getPaymentChoice(Restaurant restaurant, Scanner sc, int totalPrice) {
         System.out.println("How do you want to pay for food?");
         System.out.println("1. Cash");
         System.out.println("2. Credit card");
         System.out.println("3. Apple pay");
-
 
         System.out.print("Enter number: ");
         int paymentChoice = sc.nextInt();
@@ -446,12 +481,14 @@ public class UserConsoleHandler {
         if(totalPrice > 0) {
             System.out.println("Your bill: KZT " + totalPrice );
             restaurant.pay(totalPrice);
+            paymentCtrl.create(customerID, products, paymentChoice, totalPrice);
         } else {
             int maxPrice = 20000;
             int minPrice = 2000;
             int price = (int)(Math.random()*(maxPrice-minPrice+1)+minPrice);
             System.out.println("Your bill: KZT " + price );
             restaurant.pay(price);
+            paymentCtrl.create(customerID, products, paymentChoice, totalPrice);
         }
     }
 

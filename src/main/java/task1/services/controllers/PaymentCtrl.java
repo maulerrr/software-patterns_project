@@ -1,8 +1,12 @@
 package task1.services.controllers;
 
 import task1.services.DB.data.PaymentsRepo;
+import task1.services.DB.data.ProductRepo;
+import task1.services.DB.data.RestaurantsRepo;
 import task1.services.DB.data.interfaces.IPaymentRepo;
 import task1.services.DB.models.PaymentCheck;
+import task1.services.DB.models.Product;
+import task1.services.DB.models.Restaurant;
 
 import java.util.List;
 
@@ -39,8 +43,20 @@ public class PaymentCtrl {
         return response;
     }
 
-    public String create(int customer_id, int product_id) {
-        PaymentCheck paymentCheck = new PaymentCheck(customer_id, product_id);
+    public String createAuto(int customer_id, List<Product> products, int payment_method) {
+        double total_payment = paymentRepo.calculateTotal(products);
+        PaymentCheck paymentCheck = new PaymentCheck(customer_id, products, total_payment, payment_method);
+
+        boolean created = paymentRepo.create(paymentCheck);
+
+        if (created)
+            return "Payment success! \n" + paymentCheck.getPayment_date();
+
+        return "Invalid payment!";
+    }
+
+    public String create(int customer_id, List<Product> products, int payment_method, double total_payment) {
+        PaymentCheck paymentCheck = new PaymentCheck(customer_id, products, total_payment, payment_method);
 
         boolean created = paymentRepo.create(paymentCheck);
 
@@ -62,11 +78,11 @@ public class PaymentCtrl {
         return "Cannot be deleted!";
     }
 
-    public static void main(String[] args) {
-        PaymentsRepo paymentsRepo = new PaymentsRepo();
-        PaymentCtrl ctrl = new PaymentCtrl(paymentsRepo);
-        System.out.println(ctrl.getAll());
-
-
-    }
+//    public static void main(String[] args) {
+//        PaymentsRepo paymentsRepo = new PaymentsRepo();
+//        PaymentCtrl ctrl = new PaymentCtrl(paymentsRepo);
+//        System.out.println(ctrl.deleteByID(420));
+//
+//
+//    }
 }

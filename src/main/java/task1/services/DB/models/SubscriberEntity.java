@@ -8,7 +8,7 @@ public class SubscriberEntity {
     int subscriber_id;
     String subscriber_name;
     String subscriber_email;
-    List<UserNotifier> subscriptions;
+    List<Boolean> subscriptions;
 
     public SubscriberEntity(){
 
@@ -44,11 +44,11 @@ public class SubscriberEntity {
         this.subscriber_email = subscriber_email;
     }
 
-    public List<UserNotifier> getSubscriptions() {
+    public List<Boolean> getSubscriptions() {
         return subscriptions;
     }
 
-    public void setSubscriptions(List<UserNotifier> subscriptions) {
+    public void setSubscriptions(List<Boolean> subscriptions) {
         this.subscriptions = subscriptions;
     }
 }

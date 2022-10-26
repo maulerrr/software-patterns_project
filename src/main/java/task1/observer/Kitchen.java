@@ -3,6 +3,15 @@ package task1.observer;
 import task1.observer.state.KitchenState;
 
 public class Kitchen implements Observer, KitchenState {
+    private static Kitchen kitchen;
+
+    private Kitchen(){}
+
+    public static Kitchen getInstance(){
+        if (kitchen==null)
+            return new Kitchen();
+        return kitchen;
+    }
 
     @Override
     public void update(String message) {

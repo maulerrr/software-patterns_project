@@ -3,6 +3,7 @@ package task1.services.DB.data;
 import task1.services.DB.DB;
 import task1.services.DB.data.interfaces.IPaymentRepo;
 import task1.services.DB.models.PaymentCheck;
+import task1.services.DB.models.Product;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -26,10 +27,12 @@ public class PaymentsRepo implements IPaymentRepo {
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM payments WHERE payment_id = " + id);
             if (rs.next()) {
-                paymentCheck = new PaymentCheck(rs.getInt("payment_id"),
+                paymentCheck = new PaymentCheck(
+                        rs.getInt("payment_id"),
                         rs.getInt("customer_id"),
-                        rs.getInt("product_id"),
-                        rs.getDate("payment_date"));
+                        rs.getDate("payment_date"),
+                        rs.getDouble("total_payment"),
+                        rs.getInt("payment_method"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -47,10 +50,12 @@ public class PaymentsRepo implements IPaymentRepo {
             ResultSet rs = stmt.executeQuery("SELECT * FROM payments");
 
             while (rs.next()) {
-                PaymentCheck payment =new PaymentCheck(rs.getInt("payment_id"),
+                PaymentCheck payment =new PaymentCheck(
+                        rs.getInt("payment_id"),
                         rs.getInt("customer_id"),
-                        rs.getInt("product_id"),
-                        rs.getDate("payment_date"));
+                        rs.getDate("payment_date"),
+                        rs.getDouble("total_payment"),
+                        rs.getInt("payment_method"));
                 payments.add(payment);
             }
         } catch (SQLException e) {
@@ -66,11 +71,12 @@ public class PaymentsRepo implements IPaymentRepo {
             Connection conn = db.getConnection();
             Statement stmt = conn.createStatement();
 
-            stmt.execute("INSERT INTO payments(customer_id, product_id, payment_date) " +
+            stmt.execute("INSERT INTO payments(customer_id, payment_date, total_payment, payment_method) " +
                     "VALUES('"
                     + payment.getCustomer_id() + "','"
-                    + payment.getProduct_id() + "','"
-                    + payment.getPayment_date() + "')");
+                    + payment.getPayment_date() + "','"
+                    + payment.getTotal_payment() + "','"
+                    + payment.getPayment_method()+ "')");
             return true;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -92,15 +98,19 @@ public class PaymentsRepo implements IPaymentRepo {
         return false;
     }
 
-    public double calculateTotal(int amount){
+    @Override
+    public double calculateTotal(List<Product> products){
         double total = 0;
         try {
             Connection conn = db.getConnection();
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT price FROM products");
-
-            if (rs.next()) {
-                total = rs.getDouble("price") * amount;
+            ResultSet rs;
+            for (int i = 0; i < products.size(); i++) {
+                rs = stmt.executeQuery(
+                        "SELECT price FROM products WHERE product_id = " + products.get(i).getProduct_id());
+                if (rs.next()) {
+                    total += rs.getDouble("price");
+                }
             }
 
             return total;

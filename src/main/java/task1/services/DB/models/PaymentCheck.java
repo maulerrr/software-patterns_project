@@ -2,27 +2,42 @@ package task1.services.DB.models;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class PaymentCheck {
     int payment_id;
     int customer_id;
-    int product_id;
     Date payment_date;
-
-    int amount;
     double total_payment;
+    int payment_method;
+
+
+    List<Product> products;
+    int product_id;
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
+
+    public void setPayment_date(Date payment_date) {
+        this.payment_date = payment_date;
+    }
+
+    public int getPayment_method() {
+        return payment_method;
+    }
+
+    public void setPayment_method(int payment_method) {
+        this.payment_method = payment_method;
+    }
 
 //    public void setPayment_date(Date payment_date) {
 //        this.payment_date = payment_date;
 //    }
-
-    public int getAmount() {
-        return amount;
-    }
-
-    public void setAmount(int amount) {
-        this.amount = amount;
-    }
 
     public double getTotal_payment() {
         return total_payment;
@@ -71,18 +86,30 @@ public class PaymentCheck {
     public PaymentCheck(){
 
     }
-    public PaymentCheck(int customer_id, int product_id){
-//        this.payment_id = payment_id; AUTOINCREMENT VALUE
+
+    //local use
+    public PaymentCheck(int customer_id, List<Product> products
+, double total_payment, int payment_method){
         this.customer_id = customer_id;
-        this.product_id = product_id;
+        this.products = products;
         setPayment_date();
+        this.total_payment = total_payment;
+        this.payment_method = payment_method;
     }
 
-    public PaymentCheck(int payment_id, int customer_id, int product_id, Date payment_date) {
+//    public PaymentCheck(int customer_id, int product_id) {
+//        this.product_id = product_id;
+//        this.customer_id = customer_id;
+//    }
+
+
+//for get method
+    public PaymentCheck(int payment_id, int customer_id, Date payment_date, double total_payment,int payment_method) {
         this.payment_id = payment_id;
         this.customer_id = customer_id;
-        this.product_id = product_id;
         this.payment_date = payment_date;
+        this.total_payment = total_payment;
+        this.payment_method = payment_method;
     }
 
     @Override
