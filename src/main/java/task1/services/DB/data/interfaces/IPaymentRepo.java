@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface IPaymentRepo extends EntityRepo<PaymentCheck>{
     double calculateTotal(List<Product> products);
+    void addDetailToOrder(List<Product> products, PaymentCheck paymentCheck, int restik_id);
 }

@@ -17,13 +17,13 @@ public class PaymentCtrl {
         this.paymentRepo = paymentRepo;
     }
 
-    public String getByID(int id){
+    public PaymentCheck getByID(int id){
         PaymentCheck paymentCheck =paymentRepo.get(id);
 
         if (paymentCheck ==null)
             System.out.println("Check with id = " + id + " does not exist in database!");
         
-        return paymentCheck != null ? paymentCheck.toString() : null;
+        return paymentCheck;
     }
 
     public String getAll(){
@@ -66,6 +66,7 @@ public class PaymentCtrl {
         return "Invalid payment!";
     }
 
+
     public String deleteByID(int id){
         PaymentCheck paymentCheck = paymentRepo.get(id);
 
@@ -77,12 +78,4 @@ public class PaymentCtrl {
 
         return "Cannot be deleted!";
     }
-
-//    public static void main(String[] args) {
-//        PaymentsRepo paymentsRepo = new PaymentsRepo();
-//        PaymentCtrl ctrl = new PaymentCtrl(paymentsRepo);
-//        System.out.println(ctrl.deleteByID(420));
-//
-//
-//    }
 }

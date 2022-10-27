@@ -18,8 +18,6 @@ public class Kitchen implements Observer {
         System.out.println("Kitchen: " + message);
     }
 
-
-
     public static Kitchen getInstance() {
         if (kitchen == null) {
             return new Kitchen();
@@ -27,8 +25,7 @@ public class Kitchen implements Observer {
         return kitchen;
     }
 
-    private Kitchen() {
-    }
+    private Kitchen() {}
 
     public void changeState() {
         if (kitchenState instanceof FoodCooking) {

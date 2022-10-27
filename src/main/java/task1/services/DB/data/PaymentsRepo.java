@@ -25,7 +25,7 @@ public class PaymentsRepo implements IPaymentRepo {
         try {
             Connection conn = db.getConnection();
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM payments WHERE payment_id = " + id);
+            ResultSet rs = stmt.executeQuery("SELECT * FROM payments WHERE customer_id = " + id);
             if (rs.next()) {
                 paymentCheck = new PaymentCheck(
                         rs.getInt("payment_id"),
@@ -84,6 +84,30 @@ public class PaymentsRepo implements IPaymentRepo {
         return false;
     }
 
+    @Override
+    public void addDetailToOrder(List<Product> products, PaymentCheck paymentCheck, int restik_id) {
+        try{
+            Connection conn = db.getConnection();
+            Statement stmt = conn.createStatement();
+
+            double paid = 0;
+
+            for (int index = 0; index < products.size(); index++) {
+                paid = products.get(index).getPrice();
+                ResultSet rs = stmt.executeQuery("INSERT INTO payment_details" +
+                        "(payment_id, product_id, category, paid, customer_id, restik_id)" +
+                                " VALUES(" + paymentCheck.getPayment_id() + ',' +
+                                            products.get(index).getProduct_id() + ',' +
+                                            products.get(index).getProduct_category() + ',' +
+                                            paid + ',' +
+                                            paymentCheck.getCustomer_id() + ',' +
+                                            restik_id + ")");
+                rs.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public boolean delete(int id) {

@@ -20,7 +20,11 @@ public class MexicanRestaurant extends Restaurant implements Deliverable {
 
     @Override
     public void cookFoodForDelivery() {
-        getKitchen().cookFood();
+        getKitchen().doAction();
+        getKitchen().changeState();
+        getKitchen().doAction();
+        getKitchen().changeState();
+        getKitchen().doAction();
     }
 
     public void setDeliverStrategy(Delivery delivery){

@@ -103,7 +103,13 @@ public abstract class Restaurant implements FoodCookingTracker, StaffEnroller, S
 
     public void cookFood(int tableNumber){
         notifyKitchenAndTable("Starting to cook!", tableNumber);
-        kitchen.cookFood();
+
+        kitchen.doAction();
+            kitchen.changeState();
+        kitchen.doAction();
+            kitchen.changeState();
+        kitchen.doAction();
+
         notifyKitchenAndTable("Finished cooking!", tableNumber);
     }
 

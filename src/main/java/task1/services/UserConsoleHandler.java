@@ -35,14 +35,14 @@ public class UserConsoleHandler {
 
     static int customerID = (int) (Math.random()*10000);          //by default, since no authorization
 
-    static task1.services.DB.models.Restaurant restaurant;
+    static task1.services.DB.models.Restaurant servingRestaurant;
     static Customer customer;
 
     static CustomerCtrl customerCtrl = new CustomerCtrl(new CustomerRepo());
     static RestaurantCtrl restaurantCtrl = new RestaurantCtrl(new RestaurantsRepo());
     static PaymentCtrl paymentCtrl = new PaymentCtrl(new PaymentsRepo());
+    static List<Product> purchasedProducts = new ArrayList<>();
     static List<Product> products = new ArrayList<>();
-
 
     public static void handleUserChoice(Scanner sc) {
         System.out.println("----------------------------------");
@@ -59,23 +59,32 @@ public class UserConsoleHandler {
         int numberOfRestaurant = sc.nextInt();
         if(numberOfRestaurant > 3 || numberOfRestaurant <= 0) throw new IllegalStateException("Error! You entered wrong number!");
 
-        restaurant = restaurantCtrl.getRestaurant(numberOfRestaurant);
+        servingRestaurant = restaurantCtrl.getRestaurant(numberOfRestaurant);
 
         switch (numberOfRestaurant) {
             case 1 -> {
                 KoreanRestaurant koreanRestaurant = (KoreanRestaurant) RestaurantsFactory
                         .getRestaurant(RestaurantNames.KOREAN);
+
+                products = restaurantCtrl.retrieveProducts(numberOfRestaurant);
+
                 executeDefaultRestaurant(koreanRestaurant, sc);
             }
             case 2 -> {
                 MexicanRestaurant mexicanRestaurant = (MexicanRestaurant) RestaurantsFactory
                         .getRestaurant(RestaurantNames.MEXICAN);
+
+                products = restaurantCtrl.retrieveProducts(numberOfRestaurant);
+
                 executeDeliverableRestaurant(mexicanRestaurant, sc);
             }
             case 3 -> {
                 PizzeriaRestaurant pizzeriaRestaurant = (PizzeriaRestaurant) RestaurantsFactory
                         .getRestaurant(RestaurantNames.PIZZERIA);
                 PizzaOrder pizzaOrder = new PizzaOrder();
+
+                products = restaurantCtrl.retrieveProducts(numberOfRestaurant);
+
                 executePizzeriaRestaurant(pizzeriaRestaurant, pizzaOrder, sc);
             }
         }
@@ -84,7 +93,7 @@ public class UserConsoleHandler {
     private static void executeUserNotifierSendersChoice(Scanner sc) {
         System.out.println("----------------------------------");
         System.out.println("""
-                Do you want to get up-to-date news from our services?\s
+                Do you want to get up-to-date news from o.ur services?\s
                 1. Yes\s
                 2. No""");
 
@@ -350,10 +359,22 @@ public class UserConsoleHandler {
         if(pizzaChoice > 4 || pizzaChoice < 0) throw new IllegalStateException("No such choice");
 
         switch (pizzaChoice){
-            case 1 -> pizza = new Pepperoni("Tomato sauce, cheese, sausages","Pepperoni pizza");
-            case 2 -> pizza = new Margaritta("Tomato sauce, cheese, tomatoes","Margaritta pizza");
-            case 3 -> pizza = new Diablo("Jalapeno, spicy sauce, pepper, chicken","Diablo pizza");
-            case 4 -> pizza = new Pesto("Chicken, pesto sauce, mozzarella, brynza","Pesto pizza");
+            case 1 -> {
+                pizza = new Pepperoni("Tomato sauce, cheese, sausages", "Pepperoni pizza");
+                purchasedProducts.add(products.get(pizzaChoice));
+            }
+            case 2 -> {
+                pizza = new Margaritta("Tomato sauce, cheese, tomatoes", "Margaritta pizza");
+                purchasedProducts.add(products.get(pizzaChoice));
+            }
+            case 3 -> {
+                pizza = new Diablo("Jalapeno, spicy sauce, pepper, chicken", "Diablo pizza");
+                purchasedProducts.add(products.get(pizzaChoice));
+            }
+            case 4 -> {
+                pizza = new Pesto("Chicken, pesto sauce, mozzarella, brynza", "Pesto pizza");
+                purchasedProducts.add(products.get(pizzaChoice));
+            }
 
         }
 
@@ -481,14 +502,19 @@ public class UserConsoleHandler {
         if(totalPrice > 0) {
             System.out.println("Your bill: KZT " + totalPrice );
             restaurant.pay(totalPrice);
-            paymentCtrl.create(customerID, products, paymentChoice, totalPrice);
+            paymentCtrl.create(customerID, purchasedProducts, paymentChoice, totalPrice);
+
+            restaurantCtrl.addDetailToOrder(purchasedProducts, paymentCtrl.getByID(customerID), servingRestaurant.getRestik_id());
+
         } else {
             int maxPrice = 20000;
             int minPrice = 2000;
             int price = (int)(Math.random()*(maxPrice-minPrice+1)+minPrice);
             System.out.println("Your bill: KZT " + price );
             restaurant.pay(price);
-            paymentCtrl.create(customerID, products, paymentChoice, totalPrice);
+            paymentCtrl.create(customerID, purchasedProducts, paymentChoice, price);
+
+            restaurantCtrl.addDetailToOrder(purchasedProducts, paymentCtrl.getByID(customerID), servingRestaurant.getRestik_id());
         }
     }
 

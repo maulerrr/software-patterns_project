@@ -1,8 +1,11 @@
 package task1.services.controllers;
 
+import task1.services.DB.data.PaymentsRepo;
 import task1.services.DB.data.ProductRepo;
+import task1.services.DB.data.interfaces.IPaymentRepo;
 import task1.services.DB.data.interfaces.IProductRepo;
 import task1.services.DB.data.interfaces.IRestaurantRepo;
+import task1.services.DB.models.PaymentCheck;
 import task1.services.DB.models.Product;
 import task1.services.DB.models.Restaurant;
 
@@ -12,6 +15,7 @@ import java.util.List;
 public class RestaurantCtrl {
     IRestaurantRepo restaurantRepo;
     static IProductRepo productRepo = new ProductRepo();
+    static IPaymentRepo paymentRepo = new PaymentsRepo();
 
     public RestaurantCtrl(IRestaurantRepo restaurantsRepo){
         this.restaurantRepo = restaurantsRepo;
@@ -34,5 +38,8 @@ public class RestaurantCtrl {
         return restaurantProducts;
     }
 
+    public void addDetailToOrder(List<Product> products, PaymentCheck paymentCheck, int restik_id){
+        paymentRepo.addDetailToOrder(products, paymentCheck, restik_id);
+    }
 
 }
