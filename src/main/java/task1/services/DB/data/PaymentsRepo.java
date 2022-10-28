@@ -90,22 +90,24 @@ public class PaymentsRepo implements IPaymentRepo {
             Connection conn = db.getConnection();
             Statement stmt = conn.createStatement();
 
-            double paid = 0;
+            String query  = "INSERT INTO payment_details (payment_id, product_id, category, paid, customer_id, restik_id)" +
+                        " VALUES ";
 
-            for (int index = 0; index < products.size(); index++) {
-                paid = products.get(index).getPrice();
-                ResultSet rs = stmt.executeQuery("INSERT INTO payment_details" +
-                        "(payment_id, product_id, category, paid, customer_id, restik_id)" +
-                                " VALUES(" + paymentCheck.getPayment_id() + ',' +
-                                            products.get(index).getProduct_id() + ',' +
-                                            products.get(index).getProduct_category() + ',' +
-                                            paid + ',' +
-                                            paymentCheck.getCustomer_id() + ',' +
-                                            restik_id + ")");
-                rs.close();
+            for(Product product: products){
+                String tempQuery = "(" + paymentCheck.getPayment_id() + ',' +
+                product.getProduct_id() + ',' +
+                        product.getProduct_category() + ',' +
+                        product.getPrice() + ',' +
+                        paymentCheck.getCustomer_id() + ',' +
+                        restik_id + ")";
+                query += tempQuery + ',';
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+
+                query = query.substring(0, query.length()-1);
+
+                ResultSet rs = stmt.executeQuery(query);
+            } catch (SQLException ex) {
+            ex.printStackTrace();
         }
     }
 

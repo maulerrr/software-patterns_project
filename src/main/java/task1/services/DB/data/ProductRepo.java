@@ -48,6 +48,7 @@ public class ProductRepo implements IProductRepo {
     @Override
     public List<Product> getAll() {
         List<Product> products = new ArrayList<>();
+        products.add(null);
         try {
             Connection conn = db.getConnection();
             Statement stmt = conn.createStatement();
@@ -77,6 +78,7 @@ public class ProductRepo implements IProductRepo {
     @Override
     public List<Product> getAllByRestik(int restik_id) {
         List<Product> products = new ArrayList<>();
+        products.add(null);
         try {
             Connection conn = db.getConnection();
             Statement stmt = conn.createStatement();

@@ -19,8 +19,7 @@ public class RestaurantsRepo implements IRestaurantRepo {
     @Override
     public Restaurant get(int id) {
         Restaurant restaurant = null;
-        List<Product> products = new ArrayList<>();
-        products = new ProductRepo().getAllByRestik(id);
+        List<Product> products;
 
         try {
             Connection conn = db.getConnection();
@@ -29,8 +28,7 @@ public class RestaurantsRepo implements IRestaurantRepo {
             if (rs.next()) {
                 restaurant = new Restaurant(
                         rs.getInt("restik_id"),
-                        rs.getString("restik_name"),
-                        products
+                        rs.getString("restik_name")
                 );
             }
 
@@ -44,13 +42,15 @@ public class RestaurantsRepo implements IRestaurantRepo {
     @Override
     public List<Restaurant> getAll() {
         List<Restaurant> restaurants = new ArrayList<>();
+        List<Product> products = new ArrayList<>();
+        products.add(null);
+
         try {
             Connection conn = db.getConnection();
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM restaurants");
 
             while (rs.next()) {
-                List<Product> products;
                 products = new ProductRepo().getAllByRestik(rs.getInt("restik_id"));
 
                 Restaurant restaurant = new Restaurant(
